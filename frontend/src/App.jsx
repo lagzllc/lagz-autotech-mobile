@@ -5,12 +5,14 @@ import Home from "./pages/Home";
 import Services from "./pages/Services";
 import Booking from "./pages/Booking";
 import Contact from "./pages/Contact";
+import Booking from "./pages/Booking";
 
 export default function App() {
   return (
     <BrowserRouter>
       <Navbar />
       <Routes>
+        <Route path="/book" element={<Booking />} />
         <Route path="/" element={<Home />} />
         <Route path="/services" element={<Services />} />
         <Route path="/book" element={<Booking />} />
