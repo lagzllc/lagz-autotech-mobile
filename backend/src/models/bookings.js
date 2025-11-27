@@ -1,5 +1,9 @@
 import pool from "../config/db.js";
-import { sendBookingEmail } from "../utils/email.js";
+import { sendBookingEmail, sendAdminNotification } from "../utils/email.js";
+
+// ======================================================
+// CREATE NEW BOOKING
+// ======================================================
 
 export async function createBooking(data) {
   try {
@@ -8,8 +12,7 @@ export async function createBooking(data) {
         customer_name, customer_email, customer_phone,
         vehicle_make, vehicle_model, vehicle_year,
         service_id, technician_id, appointment_date
-      )
-      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
+      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
       RETURNING *;
     `;
 
@@ -28,38 +31,75 @@ export async function createBooking(data) {
     const result = await pool.query(query, values);
     const booking = result.rows[0];
 
-    // ✅ Send confirmation email
+    console.log("✅ Booking created:", booking);
+
+    // ======================================================
+    // SEND EMAILS (non-blocking so API stays fast)
+    // ======================================================
+
     sendBookingEmail(booking).catch(err =>
-      console.error("Email error:", err)
+      console.error("❌ Email error (customer):", err)
     );
 
+    sendAdminNotification(booking).catch(err =>
+      console.error("❌ Email error (admin):", err)
+    );
+
+    // ======================================================
+    // RETURN NEW BOOKING
+    // ======================================================
     return booking;
 
   } catch (err) {
-    console.error("Booking error:", err);
+    console.error("❌ Booking error:", err);
     throw err;
   }
 }
 
-// Send customer confirmation
-await sendEmail(
-  data.customer_email,
-  "Your Booking is Confirmed - Lagz AutoTech Mobile",
-  `
-  <h2>Thanks for booking with us!</h2>
-  <p>Your appointment is scheduled for <strong>${data.appointment_date}</strong>.</p>
-  <p>We will contact you shortly.</p>
-  `
-);
+// ======================================================
+// GET ALL BOOKINGS
+// ======================================================
 
-// Send admin alert
-await sendEmail(
-  "service@lagzautotechmobile.com",
-  "New Booking Received",
-  `
-  <h2>New Booking</h2>
-  <p>Name: ${data.customer_name}</p>
-  <p>Service ID: ${data.service_id}</p>
-  <p>Scheduled: ${data.appointment_date}</p>
-  `
-);
+export async function getAllBookings() {
+  try {
+    const result = await pool.query("SELECT * FROM bookings ORDER BY id DESC");
+    return result.rows;
+  } catch (err) {
+    console.error("❌ Failed to fetch bookings:", err);
+    throw err;
+  }
+}
+
+// ======================================================
+// GET A BOOKING BY ID
+// ======================================================
+
+export async function getBookingById(id) {
+  try {
+    const result = await pool.query(
+      "SELECT * FROM bookings WHERE id = $1",
+      [id]
+    );
+    return result.rows[0];
+  } catch (err) {
+    console.error("❌ Failed to fetch booking:", err);
+    throw err;
+  }
+}
+
+// ======================================================
+// UPDATE BOOKING STATUS
+// ======================================================
+
+export async function updateBookingStatus(id, status) {
+  try {
+    const result = await pool.query(
+      "UPDATE bookings SET status = $1 WHERE id = $2 RETURNING *",
+      [status, id]
+    );
+    return result.rows[0];
+  } catch (err) {
+    console.error("❌ Failed to update status:", err);
+    throw err;
+  }
+}
