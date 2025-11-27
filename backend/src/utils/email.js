@@ -1,29 +1,29 @@
 // backend/src/utils/email.js
-
 import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-// --------------------------------------------------------
-//  NEW EMAILS YOU REQUESTED
-// --------------------------------------------------------
+// ======================
+// 📧 EMAIL ADDRESSES
+// ======================
 const ADMIN_EMAIL = "admin@lagzautotechmobile.com";
 const TECHNICIAN_EMAIL = "noah@lagzautotechmobile.com";
-const FROM_EMAIL = "service@lagzautotechmobile.com";   // customer-facing
-// --------------------------------------------------------
+const SERVICE_EMAIL = "service@lagzautotechmobile.com";
 
+// ======================
+// 📩 Send email to customer
+// ======================
 export async function sendBookingEmail(booking) {
   try {
     await resend.emails.send({
-      from: `Lagz AutoTech Mobile <${FROM_EMAIL}>`,
+      from: "Lagz AutoTech <service@lagzautotechmobile.com>",
       to: booking.customer_email,
-      subject: "Your Booking Confirmation",
+      subject: "Your Booking is Confirmed!",
       html: `
-        <h2>Booking Confirmed</h2>
-        <p>Hi ${booking.customer_name}, your booking has been received!</p>
-        <p><strong>Service:</strong> ID ${booking.service_id}</p>
-        <p><strong>Date:</strong> ${booking.appointment_date}</p>
-        <p>We will contact you soon.</p>
+        <h2>Your Booking is Confirmed</h2>
+        <p>Thank you for choosing Lagz AutoTech Mobile!</p>
+        <p><strong>Appointment:</strong> ${booking.appointment_date}</p>
+        <p><strong>Service ID:</strong> ${booking.service_id}</p>
       `
     });
 
@@ -33,24 +33,33 @@ export async function sendBookingEmail(booking) {
   }
 }
 
+// ======================
+// 🛠 Send notification to Admin + Technician + Service Desk
+// ======================
 export async function sendAdminNotification(booking) {
-  try {
-    await resend.emails.send({
-      from: `Lagz AutoTech Mobile <${FROM_EMAIL}>`,
-      to: [ADMIN_EMAIL, TECHNICIAN_EMAIL], // send to BOTH admin + tech
-      subject: "New Booking Received",
-      html: `
-        <h2>New Booking Created</h2>
-        <p><strong>Name:</strong> ${booking.customer_name}</p>
-        <p><strong>Email:</strong> ${booking.customer_email}</p>
-        <p><strong>Phone:</strong> ${booking.customer_phone}</p>
-        <p><strong>Service ID:</strong> ${booking.service_id}</p>
-        <p><strong>Date:</strong> ${booking.appointment_date}</p>
-      `
-    });
+  const emails = [ADMIN_EMAIL, TECHNICIAN_EMAIL, SERVICE_EMAIL];
 
-    console.log("Admin + Technician notification sent!");
-  } catch (err) {
-    console.error("❌ Email error (admin):", err);
+  for (const email of emails) {
+    try {
+      await resend.emails.send({
+        from: "Lagz AutoTech <service@lagzautotechmobile.com>",
+        to: email,
+        subject: "📥 New Booking Submitted",
+        html: `
+          <h2>New Booking Alert</h2>
+          <p><strong>Name:</strong> ${booking.customer_name}</p>
+          <p><strong>Email:</strong> ${booking.customer_email}</p>
+          <p><strong>Phone:</strong> ${booking.customer_phone}</p>
+          <p><strong>Vehicle:</strong> ${booking.vehicle_year} ${booking.vehicle_make} ${booking.vehicle_model}</p>
+          <p><strong>Service ID:</strong> ${booking.service_id}</p>
+          <p><strong>Technician:</strong> ${booking.technician_id}</p>
+          <p><strong>Appointment:</strong> ${booking.appointment_date}</p>
+        `
+      });
+
+      console.log(`Admin/Tech/Service email sent to: ${email}`);
+    } catch (err) {
+      console.error(`❌ Email error (${email}):`, err);
+    }
   }
 }
