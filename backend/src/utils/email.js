@@ -1,63 +1,45 @@
-import nodemailer from "nodemailer";
+// backend/src/utils/email.js
+import { Resend } from "resend";
 
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: process.env.SMTP_PORT,
-  secure: false, // Brevo uses STARTTLS, not SSL
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
-  }
-});
-
-// ======================================================
-// SEND EMAIL TO CUSTOMER
-// ======================================================
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function sendBookingEmail(booking) {
-  const message = `
-Hello ${booking.customer_name},
+  try {
+    await resend.emails.send({
+      from: process.env.EMAIL_FROM,
+      to: booking.customer_email,
+      subject: "Your Appointment is Confirmed",
+      html: `
+        <h2>Appointment Confirmation</h2>
+        <p>Hi ${booking.customer_name},</p>
+        <p>Your appointment is scheduled for:</p>
+        <p><strong>${booking.appointment_date}</strong></p>
+        <p>Thank you for choosing Lagz AutoTech Mobile.</p>
+      `
+    });
 
-Your booking has been confirmed!
-
-Service: ${booking.service_id}
-Vehicle: ${booking.vehicle_year} ${booking.vehicle_make} ${booking.vehicle_model}
-Appointment: ${booking.appointment_date}
-
-Thank you for choosing Lagz AutoTech Mobile!
-  `;
-
-  await transporter.sendMail({
-    from: `"Lagz AutoTech Mobile" <${process.env.EMAIL_USER}>`,
-    to: booking.customer_email,
-    subject: "Your booking is confirmed",
-    text: message
-  });
+    console.log("Customer email sent!");
+  } catch (err) {
+    console.error("Email error (customer):", err);
+  }
 }
 
-// ======================================================
-// SEND EMAIL TO ADMIN (YOU)
-// ======================================================
-
 export async function sendAdminNotification(booking) {
-  const message = `
-NEW BOOKING RECEIVED:
+  try {
+    await resend.emails.send({
+      from: process.env.EMAIL_FROM,
+      to: process.env.ADMIN_EMAIL,
+      subject: "New Booking Received",
+      html: `
+        <h2>New Booking</h2>
+        <p><strong>Name:</strong> ${booking.customer_name}</p>
+        <p><strong>Service ID:</strong> ${booking.service_id}</p>
+        <p><strong>Date:</strong> ${booking.appointment_date}</p>
+      `
+    });
 
-Name: ${booking.customer_name}
-Email: ${booking.customer_email}
-Phone: ${booking.customer_phone}
-
-Service: ${booking.service_id}
-Vehicle: ${booking.vehicle_year} ${booking.vehicle_make} ${booking.vehicle_model}
-Appointment: ${booking.appointment_date}
-
-Check CRM for details.
-  `;
-
-  await transporter.sendMail({
-    from: `"Lagz AutoTech Mobile" <${process.env.EMAIL_USER}>`,
-    to: process.env.ADMIN_EMAIL,
-    subject: "New Booking Received",
-    text: message
-  });
+    console.log("Admin email sent!");
+  } catch (err) {
+    console.error("Email error (admin):", err);
+  }
 }
