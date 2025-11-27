@@ -1,11 +1,8 @@
+// backend/src/models/bookings.js
 import pool from "../config/db.js";
 import { sendBookingEmail, sendAdminNotification } from "../utils/email.js";
 
-// ======================================================
-// CREATE NEW BOOKING
-// ======================================================
-
-export async function createBooking(data) {
+export const createBooking = async (data) => {
   try {
     const query = `
       INSERT INTO bookings (
@@ -33,73 +30,22 @@ export async function createBooking(data) {
 
     console.log("✅ Booking created:", booking);
 
-    // ======================================================
-    // SEND EMAILS (non-blocking so API stays fast)
-    // ======================================================
+    // ---- SEND EMAILS ----
+    try {
+      await sendBookingEmail(booking);
+    } catch (err) {
+      console.error("❌ Email error (customer):", err);
+    }
 
-    sendBookingEmail(booking).catch(err =>
-      console.error("❌ Email error (customer):", err)
-    );
+    try {
+      await sendAdminNotification(booking);
+    } catch (err) {
+      console.error("❌ Email error (admin):", err);
+    }
 
-    sendAdminNotification(booking).catch(err =>
-      console.error("❌ Email error (admin):", err)
-    );
-
-    // ======================================================
-    // RETURN NEW BOOKING
-    // ======================================================
     return booking;
-
   } catch (err) {
-    console.error("❌ Booking error:", err);
+    console.error("Booking error:", err);
     throw err;
   }
-}
-
-// ======================================================
-// GET ALL BOOKINGS
-// ======================================================
-
-export async function getAllBookings() {
-  try {
-    const result = await pool.query("SELECT * FROM bookings ORDER BY id DESC");
-    return result.rows;
-  } catch (err) {
-    console.error("❌ Failed to fetch bookings:", err);
-    throw err;
-  }
-}
-
-// ======================================================
-// GET A BOOKING BY ID
-// ======================================================
-
-export async function getBookingById(id) {
-  try {
-    const result = await pool.query(
-      "SELECT * FROM bookings WHERE id = $1",
-      [id]
-    );
-    return result.rows[0];
-  } catch (err) {
-    console.error("❌ Failed to fetch booking:", err);
-    throw err;
-  }
-}
-
-// ======================================================
-// UPDATE BOOKING STATUS
-// ======================================================
-
-export async function updateBookingStatus(id, status) {
-  try {
-    const result = await pool.query(
-      "UPDATE bookings SET status = $1 WHERE id = $2 RETURNING *",
-      [status, id]
-    );
-    return result.rows[0];
-  } catch (err) {
-    console.error("❌ Failed to update status:", err);
-    throw err;
-  }
-}
+};
