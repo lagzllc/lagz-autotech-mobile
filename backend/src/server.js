@@ -3,6 +3,7 @@ import cors from "cors";
 import helmet from "helmet";
 import dotenv from "dotenv";
 import db from "./config/db.js";
+import serviceRoutes from "./routes/services.js";
 
 dotenv.config();
 const app = express();
@@ -27,6 +28,7 @@ app.use("/api/technicians", techRoutes);
 app.use("/api/vehicles", vehicleRoutes);
 app.use("/api/invoices", invoiceRoutes);
 app.use("/api/payments", paymentRoutes);
+app.use("/api/services", serviceRoutes);
 
 app.get("/", (req, res) => {
   res.json({ status: "Lagz AutoTech API running" });
