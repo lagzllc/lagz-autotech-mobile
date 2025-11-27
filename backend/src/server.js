@@ -15,7 +15,6 @@ app.use(express.json());
 
 // ROUTES
 import authRoutes from "./routes/auth.js";
-import bookingRoutes from "./routes/bookings.js";
 import customerRoutes from "./routes/customers.js";
 import techRoutes from "./routes/technicians.js";
 import vehicleRoutes from "./routes/vehicles.js";
