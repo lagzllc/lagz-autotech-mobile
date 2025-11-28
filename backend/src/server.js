@@ -20,6 +20,7 @@ import techRoutes from "./routes/technicians.js";
 import vehicleRoutes from "./routes/vehicles.js";
 import invoiceRoutes from "./routes/invoices.js";
 import paymentRoutes from "./routes/payments.js";
+import adminRoutes from "./routes/admin.js";
 
 app.use("/api/auth", authRoutes);
 app.use("/api/bookings", bookingRoutes);
@@ -30,7 +31,7 @@ app.use("/api/invoices", invoiceRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/services", serviceRoutes);
 app.use("/api/bookings", bookingRoutes);
-
+app.use("/api/admin", adminRoutes);
 app.get("/", (req, res) => {
   res.json({ status: "Lagz AutoTech API running" });
 });

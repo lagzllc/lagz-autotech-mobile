@@ -6,6 +6,7 @@ export default function Navbar() {
         <a href="/" className="hover:text-primary">Home</a>
         <a href="/services" className="hover:text-primary">Services</a>
         <a href="/book" className="hover:text-primary">Book</a>
+        <a href="/admin/login" className="hover:text-primary">Admin</a>
         <a href="/contact" className="hover:text-primary">Contact</a>
       </div>
     </nav>

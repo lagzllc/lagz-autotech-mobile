@@ -5,6 +5,8 @@ import Home from "./pages/Home";
 import Services from "./pages/Services";
 import Booking from "./pages/Booking";
 import Contact from "./pages/Contact";
+import AdminLogin from "./pages/admin/AdminLogin";
+import AdminDashboard from "./pages/admin/AdminDashboard";
 
 export default function App() {
   return (
@@ -16,6 +18,9 @@ export default function App() {
         <Route path="/services" element={<Services />} />
         <Route path="/book" element={<Booking />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/admin/login" element={<AdminLogin />} />
+<Route path="/admin/dashboard" element={<AdminDashboard />} />
+
       </Routes>
       <Footer />
     </BrowserRouter>
