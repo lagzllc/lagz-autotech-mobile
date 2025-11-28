@@ -1,10 +1,5 @@
 // backend/src/models/bookings.js
 import pool from "../config/db.js";
-import { 
-  sendBookingEmail, 
-  sendAdminNotification, 
-  sendInvoiceEmail 
-} from "../utils/email.js";
 import { generateInvoicePDF } from "../utils/pdf.js";
 
 export const createBooking = async (data) => {
@@ -35,20 +30,6 @@ export const createBooking = async (data) => {
 
     console.log("✅ Booking created:", booking);
 
-    // ---- SEND CONFIRMATION EMAIL ----
-    try {
-      await sendBookingEmail(booking);
-    } catch (err) {
-      console.error("❌ Email error (customer):", err);
-    }
-
-    // ---- SEND ADMIN EMAIL ----
-    try {
-      await sendAdminNotification(booking);
-    } catch (err) {
-      console.error("❌ Email error (admin):", err);
-    }
-
     // ---- CREATE INVOICE ----
     try {
       const invoice = await pool.query(
@@ -71,14 +52,6 @@ export const createBooking = async (data) => {
 
       // Generate PDF
       const pdfPath = await generateInvoicePDF(booking, invoiceId);
-
-      // Email invoice
-      await sendInvoiceEmail(booking, pdfPath);
-
-      console.log("📄 Invoice generated & emailed!");
-    } catch (err) {
-      console.error("❌ Invoice error:", err);
-    }
 
     return booking;
   } catch (err) {
