@@ -57,3 +57,13 @@ export async function deleteBooking(id, token) {
   });
   return res.json();
 }
+export async function getAdminStats(token) {
+  const res = await fetch(`${API_URL}/admin/stats`, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+
+  if (!res.ok) throw new Error("Failed to fetch stats");
+  return res.json();
+}

@@ -1,39 +1,55 @@
 import { useEffect, useState } from "react";
-import api from "../../lib/api";
+import { getAdminStats } from "../../lib/api";
 
-export default function Dashboard() {
+export default function AdminDashboard() {
   const [stats, setStats] = useState(null);
 
   useEffect(() => {
-    api.get("/admin/stats")
-      .then(res => setStats(res.data))
-      .catch(err => console.error("Dashboard error:", err));
+    const token = localStorage.getItem("adminToken");
+    if (!token) return (window.location.href = "/admin/login");
+
+    getAdminStats(token)
+      .then(setStats)
+      .catch(() => alert("Failed to load stats"));
   }, []);
 
-  if (!stats) return <p className="text-center mt-10">Loading...</p>;
+  if (!stats) return <p className="p-4">Loading dashboard...</p>;
 
   return (
-    <div className="p-8">
+    <div className="p-6">
       <h1 className="text-3xl font-bold mb-6">Admin Dashboard</h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="p-4 bg-white shadow rounded">
+          <h2 className="text-lg font-bold">Total Bookings</h2>
+          <p className="text-2xl">{stats.totalBookings}</p>
+        </div>
 
-        <Card title="Total Bookings" value={stats.totalBookings} color="blue" />
-        <Card title="Pending" value={stats.pending} color="yellow" />
-        <Card title="Completed" value={stats.completed} color="green" />
-        <Card title="Revenue" value={`$${stats.revenue}`} color="purple" />
-        <Card title="Technicians" value={stats.technicians} color="rose" />
+        <div className="p-4 bg-white shadow rounded">
+          <h2 className="text-lg font-bold">Pending</h2>
+          <p className="text-2xl">{stats.pending}</p>
+        </div>
 
+        <div className="p-4 bg-white shadow rounded">
+          <h2 className="text-lg font-bold">Completed</h2>
+          <p className="text-2xl">{stats.completed}</p>
+        </div>
+
+        <div className="p-4 bg-white shadow rounded">
+          <h2 className="text-lg font-bold">Revenue</h2>
+          <p className="text-2xl">${stats.revenue}</p>
+        </div>
       </div>
-    </div>
-  );
-}
 
-function Card({ title, value, color }) {
-  return (
-    <div className={`p-6 rounded-xl shadow bg-${color}-100`}>
-      <h2 className="text-lg font-semibold">{title}</h2>
-      <p className={`text-3xl font-bold text-${color}-700`}>{value}</p>
+      <button
+        className="mt-8 text-red-500"
+        onClick={() => {
+          localStorage.removeItem("adminToken");
+          window.location.href = "/admin/login";
+        }}
+      >
+        Logout
+      </button>
     </div>
   );
 }

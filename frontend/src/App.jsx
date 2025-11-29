@@ -6,7 +6,6 @@ import Services from "./pages/Services";
 import Booking from "./pages/Booking";
 import Contact from "./pages/Contact";
 import AdminLogin from "./pages/admin/AdminLogin";
-import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminBookings from "./pages/admin/AdminBookings";
 import AdminDashboard from "./pages/admin/Dashboard";
 
@@ -22,7 +21,6 @@ export default function App() {
         <Route path="/book" element={<Booking />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/admin/login" element={<AdminLogin />} />
-        <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/admin/bookings" element={<AdminBookings />} />
 
       </Routes>

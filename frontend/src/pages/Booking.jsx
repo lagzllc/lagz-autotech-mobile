@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { createBooking, getServices } from "../lib/api";
+import { useState } from "react";
+import api from "../lib/api";
 
 export default function Booking() {
   const [services, setServices] = useState([]);
