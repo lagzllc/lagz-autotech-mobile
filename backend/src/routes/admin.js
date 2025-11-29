@@ -1,56 +1,67 @@
 // backend/src/routes/admin.js
+
 import express from "express";
-import pool from "../config/db.js";
-import { adminLogin } from "../controllers/adminController.js";
 import adminAuth from "../middleware/adminAuth.js";
+import pool from "../config/db.js";
 
 const router = express.Router();
 
-/* ---------------------- ADMIN LOGIN ---------------------- */
-router.post("/login", adminLogin);
-
-/* ---------------------- ADMIN PROFILE ---------------------- */
-router.get("/me", adminAuth, (req, res) => {
-  res.json({ admin: req.admin });
-});
-
-/* ---------------------- ADMIN BOOKINGS LIST ---------------------- */
+/* ---------------------------
+   GET ALL BOOKINGS
+---------------------------- */
 router.get("/bookings", adminAuth, async (req, res) => {
   try {
-    const result = await pool.query("SELECT * FROM bookings ORDER BY id DESC");
+    const result = await pool.query(
+      `SELECT b.*, t.name AS tech_name
+       FROM bookings b
+       LEFT JOIN technicians t ON b.technician_id = t.id
+       ORDER BY b.id DESC`
+    );
     res.json({ bookings: result.rows });
   } catch (err) {
     res.status(500).json({ error: "Failed to fetch bookings" });
   }
 });
 
-/* ---------------------- ADMIN STATS ---------------------- */
+/* ---------------------------
+   UPDATE BOOKING
+---------------------------- */
+router.put("/booking/:id", adminAuth, async (req, res) => {
+  const { id } = req.params;
+  const { technician_id, status } = req.body;
+
+  try {
+    const result = await pool.query(
+      `UPDATE bookings
+       SET technician_id = $1, status = $2
+       WHERE id = $3
+       RETURNING *`,
+      [technician_id, status, id]
+    );
+
+    res.json({ success: true, booking: result.rows[0] });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to update booking" });
+  }
+});
+
+/* ---------------------------
+   ADMIN STATS
+---------------------------- */
 router.get("/stats", adminAuth, async (req, res) => {
   try {
-    const totalBookings = await pool.query(`SELECT COUNT(*) FROM bookings`);
-    const pending = await pool.query(
-      `SELECT COUNT(*) FROM bookings WHERE status='pending'`
-    );
-    const completed = await pool.query(
-      `SELECT COUNT(*) FROM bookings WHERE status='completed'`
-    );
-    const revenue = await pool.query(`SELECT COALESCE(SUM(total),0) FROM invoices`);
-    const techs = await pool.query(`SELECT COUNT(*) FROM technicians`);
+    const stats = await pool.query(`
+      SELECT
+        (SELECT COUNT(*) FROM bookings) AS total,
+        (SELECT COUNT(*) FROM bookings WHERE status='pending') AS pending,
+        (SELECT COUNT(*) FROM bookings WHERE status='completed') AS completed,
+        (SELECT COUNT(*) FROM technicians) AS techs
+    `);
 
-    res.json({
-      totalBookings: totalBookings.rows[0].count,
-      pending: pending.rows[0].count,
-      completed: completed.rows[0].count,
-      revenue: revenue.rows[0].coalesce ?? revenue.rows[0].sum,
-      technicians: techs.rows[0].count,
-    });
+    res.json(stats.rows[0]);
   } catch (err) {
-    console.error("Admin stats error:", err);
-    res.status(500).json({ error: "Failed to fetch statistics" });
+    res.status(500).json({ error: "Failed to load stats" });
   }
 });
 
 export default router;
-import { getAdminStats } from "../controllers/adminController.js";
-
-router.get("/stats", adminAuth, getAdminStats);

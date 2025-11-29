@@ -23,6 +23,7 @@ import serviceRoutes from "./routes/services.js";
 import bookingRoutes from "./routes/bookings.js";
 import adminRoutes from "./routes/admin.js";
 import techRoutes from "./routes/tech.js";
+import technicianRoutes from "./routes/technicians.js";
 
 // REGISTER ROUTES
 app.use("/api/auth", authRoutes);
@@ -34,6 +35,7 @@ app.use("/api/services", serviceRoutes);
 app.use("/api/bookings", bookingRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/tech", techRoutes);
+app.use("/api/technicians", technicianRoutes);
 
 // ROOT CHECK
 app.get("/", (req, res) => {
