@@ -1,45 +1,47 @@
+// backend/src/server.js
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import dotenv from "dotenv";
-import db from "./config/db.js";
-import serviceRoutes from "./routes/services.js";
-import bookingRoutes from "./routes/bookings.js";
 
 dotenv.config();
+
 const app = express();
 
+// MIDDLEWARE
 app.use(cors());
 app.use(helmet());
 app.use(express.json());
 
-// ROUTES
+// ROUTE IMPORTS
 import authRoutes from "./routes/auth.js";
 import customerRoutes from "./routes/customers.js";
-import techRoutes from "./routes/technicians.js";
 import vehicleRoutes from "./routes/vehicles.js";
 import invoiceRoutes from "./routes/invoices.js";
 import paymentRoutes from "./routes/payments.js";
+import serviceRoutes from "./routes/services.js";
+import bookingRoutes from "./routes/bookings.js";
 import adminRoutes from "./routes/admin.js";
-import technicianRoutes from "./routes/technicians.js";
+import techRoutes from "./routes/tech.js";
 
-app.use("/api/technicians", technicianRoutes);
+// REGISTER ROUTES
 app.use("/api/auth", authRoutes);
-app.use("/api/bookings", bookingRoutes);
 app.use("/api/customers", customerRoutes);
-app.use("/api/technicians", techRoutes);
 app.use("/api/vehicles", vehicleRoutes);
 app.use("/api/invoices", invoiceRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/services", serviceRoutes);
 app.use("/api/bookings", bookingRoutes);
 app.use("/api/admin", adminRoutes);
-import techRoutes from "./routes/tech.js";
 app.use("/api/tech", techRoutes);
 
+// ROOT CHECK
 app.get("/", (req, res) => {
   res.json({ status: "Lagz AutoTech API running" });
 });
 
-const PORT = process.env.PORT || 8080;
-app.listen(PORT, () => console.log(`API Live on ${PORT}`));
+// START SERVER
+const PORT = process.env.PORT || 10000;
+app.listen(PORT, () => {
+  console.log(`API Live on ${PORT}`);
+});
