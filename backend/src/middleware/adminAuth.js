@@ -1,17 +1,23 @@
 import jwt from "jsonwebtoken";
 
 export default function adminAuth(req, res, next) {
-  const token = req.headers.authorization?.split(" ")[1];
+  const header = req.headers.authorization;
 
-  if (!token)
+  if (!header) {
     return res.status(401).json({ error: "No token provided" });
+  }
+
+  const token = header.split(" ")[1];
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    // Attach admin info
-    req.admin = decoded;
+    // Only allow admins
+    if (!decoded.role || decoded.role !== "admin") {
+      return res.status(403).json({ error: "Forbidden — Admins only" });
+    }
 
+    req.admin = decoded;
     next();
   } catch (err) {
     res.status(401).json({ error: "Invalid token" });
