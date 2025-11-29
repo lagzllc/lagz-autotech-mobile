@@ -1,21 +1,11 @@
 import express from "express";
-import {
-  addTechnician,
-  getAvailableTechs
-} from "../models/technicians.js";
+import techAuth from "../middleware/techAuth.js";
+import { technicianLogin, getMyBookings, completeBooking } from "../controllers/technicianController.js";
 
 const router = express.Router();
 
-// Add technician
-router.post("/", async (req, res) => {
-  const tech = await addTechnician(req.body);
-  res.json(tech);
-});
-
-// List available techs
-router.get("/available", async (_req, res) => {
-  const techs = await getAvailableTechs();
-  res.json(techs);
-});
+router.post("/login", technicianLogin);
+router.get("/bookings", techAuth, getMyBookings);
+router.put("/booking/:id/complete", techAuth, completeBooking);
 
 export default router;
