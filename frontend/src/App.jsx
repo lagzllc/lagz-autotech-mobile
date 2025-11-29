@@ -8,12 +8,14 @@ import Contact from "./pages/Contact";
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminBookings from "./pages/admin/AdminBookings";
+import AdminDashboard from "./pages/admin/Dashboard";
 
 export default function App() {
   return (
     <BrowserRouter>
       <Navbar />
       <Routes>
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/book" element={<Booking />} />
         <Route path="/" element={<Home />} />
         <Route path="/services" element={<Services />} />

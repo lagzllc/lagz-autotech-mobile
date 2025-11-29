@@ -1,56 +1,52 @@
+// backend/src/routes/admin.js
 import express from "express";
 import pool from "../config/db.js";
-import adminAuth from "../middleware/adminAuth.js";
 import { adminLogin } from "../controllers/adminController.js";
+import adminAuth from "../middleware/adminAuth.js";
 
 const router = express.Router();
 
-// Admin login
+/* ---------------------- ADMIN LOGIN ---------------------- */
 router.post("/login", adminLogin);
 
-// Validate admin session
+/* ---------------------- ADMIN PROFILE ---------------------- */
 router.get("/me", adminAuth, (req, res) => {
   res.json({ admin: req.admin });
 });
 
-// Get all bookings
+/* ---------------------- ADMIN BOOKINGS LIST ---------------------- */
 router.get("/bookings", adminAuth, async (req, res) => {
   try {
     const result = await pool.query("SELECT * FROM bookings ORDER BY id DESC");
     res.json({ bookings: result.rows });
   } catch (err) {
-    console.error("Error fetching bookings:", err);
-    res.status(500).json({ error: "Server error" });
+    res.status(500).json({ error: "Failed to fetch bookings" });
   }
 });
 
-// Update booking status
-router.put("/bookings/:id/status", adminAuth, async (req, res) => {
+/* ---------------------- ADMIN STATS ---------------------- */
+router.get("/stats", adminAuth, async (req, res) => {
   try {
-    const { status } = req.body;
-    const { id } = req.params;
-
-    const result = await pool.query(
-      "UPDATE bookings SET status = $1 WHERE id = $2 RETURNING *;",
-      [status, id]
+    const totalBookings = await pool.query(`SELECT COUNT(*) FROM bookings`);
+    const pending = await pool.query(
+      `SELECT COUNT(*) FROM bookings WHERE status='pending'`
     );
+    const completed = await pool.query(
+      `SELECT COUNT(*) FROM bookings WHERE status='completed'`
+    );
+    const revenue = await pool.query(`SELECT COALESCE(SUM(total),0) FROM invoices`);
+    const techs = await pool.query(`SELECT COUNT(*) FROM technicians`);
 
-    res.json({ updated: result.rows[0] });
+    res.json({
+      totalBookings: totalBookings.rows[0].count,
+      pending: pending.rows[0].count,
+      completed: completed.rows[0].count,
+      revenue: revenue.rows[0].coalesce ?? revenue.rows[0].sum,
+      technicians: techs.rows[0].count,
+    });
   } catch (err) {
-    res.status(500).json({ error: "Failed to update status" });
-  }
-});
-
-// Delete a booking
-router.delete("/bookings/:id", adminAuth, async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    await pool.query("DELETE FROM bookings WHERE id = $1", [id]);
-
-    res.json({ success: true });
-  } catch (err) {
-    res.status(500).json({ error: "Failed to delete booking" });
+    console.error("Admin stats error:", err);
+    res.status(500).json({ error: "Failed to fetch statistics" });
   }
 });
 
