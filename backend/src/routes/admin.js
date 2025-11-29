@@ -51,3 +51,6 @@ router.get("/stats", adminAuth, async (req, res) => {
 });
 
 export default router;
+import { getAdminStats } from "../controllers/adminController.js";
+
+router.get("/stats", adminAuth, getAdminStats);
