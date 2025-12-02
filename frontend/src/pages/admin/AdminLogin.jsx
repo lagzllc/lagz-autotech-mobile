@@ -1,49 +1,68 @@
 // frontend/src/pages/admin/AdminLogin.jsx
-
 import { useState } from "react";
 import { adminLogin } from "../../lib/api";
+import { useNavigate } from "react-router-dom";
 
 export default function AdminLogin() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+  const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
 
-  const handleLogin = async (e) => {
+  async function submit(e) {
     e.preventDefault();
-    const res = await adminLogin(email, password);
+    setError("");
 
-    if (res.token) {
-      localStorage.setItem("adminToken", res.token);
-      window.location.href = "/admin/dashboard";
-    } else {
-      setError(res.error || "Login failed");
+    const res = await adminLogin(form.email, form.password);
+
+    if (res.error) {
+      setError(res.error);
+      return;
     }
-  };
+
+    if (!res.token) {
+      setError("Invalid response from server");
+      return;
+    }
+
+    localStorage.setItem("adminToken", res.token);
+    navigate("/admin/dashboard");
+  }
 
   return (
-    <div className="login-container">
-      <h2>Admin Login</h2>
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <form
+        onSubmit={submit}
+        className="bg-white shadow-lg p-8 rounded w-full max-w-md"
+      >
+        <h1 className="text-2xl font-bold mb-4 text-center">Admin Login</h1>
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
+        {error && (
+          <p className="text-red-500 text-center mb-3">{error}</p>
+        )}
 
-      <form onSubmit={handleLogin}>
         <input
           type="email"
-          placeholder="Admin Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
+          placeholder="Email"
+          className="border p-2 w-full mb-3"
+          value={form.email}
+          onChange={(e) =>
+            setForm({ ...form, email: e.target.value })
+          }
         />
 
         <input
           type="password"
-          placeholder="Admin Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
+          placeholder="Password"
+          className="border p-2 w-full mb-5"
+          value={form.password}
+          onChange={(e) =>
+            setForm({ ...form, password: e.target.value })
+          }
         />
 
-        <button type="submit">Login</button>
+        <button className="w-full bg-blue-600 text-white p-2 rounded">
+          Login
+        </button>
       </form>
     </div>
   );

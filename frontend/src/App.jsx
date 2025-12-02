@@ -36,13 +36,12 @@ export default function App() {
         {/* Tech */}
         <Route path="/tech/login" element={<TechLogin />} />
         <Route path="/tech/dashboard" element={<TechDashboard />} />
-
-        {/* Admin */}
-        <Route path="/admin/login" element={<AdminLogin />} />
-        <Route path="/admin/dashboard" element={<AdminDashboard />} />
-        <Route path="/admin/bookings" element={<AdminBookings />} />
-        <Route path="/admin/services" element={<ServicesPage />} />
-        <Route path="/admin/technicians" element={<TechniciansPage />} />
+      {/* ADMIN ROUTES */}
+      <Route path="/admin/login" element={<AdminLogin />} />
+      <Route path="/admin/dashboard" element={<AdminDashboard />} />
+      <Route path="/admin/bookings" element={<AdminBookings />} />
+      <Route path="/admin/services" element={<ServicesPage />} />
+      <Route path="/admin/technicians" element={<TechniciansPage />} />
       </Routes>
 
       <Footer />
