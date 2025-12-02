@@ -1,36 +1,43 @@
 import express from "express";
-import bcrypt from "bcryptjs";
+import pool from "../config/db.js";
 import jwt from "jsonwebtoken";
-import db from "../db.js";
+import bcryptjs from "bcryptjs";
 
 const router = express.Router();
 
+// TECHNICIAN LOGIN
 router.post("/login", async (req, res) => {
-  try {
     const { email, password } = req.body;
 
-    const tech = await db.oneOrNone(
-      "SELECT * FROM technicians WHERE email=$1",
-      [email]
-    );
+    if (!email || !password)
+        return res.status(400).json({ message: "Email and password required" });
 
-    if (!tech) return res.status(400).json({ error: "Technician not found" });
+    try {
+        const result = await pool.query(
+            "SELECT * FROM technicians WHERE email = $1 LIMIT 1",
+            [email]
+        );
 
-    const isMatch = await bcrypt.compare(password, tech.password);
+        if (result.rows.length === 0)
+            return res.status(401).json({ message: "Invalid credentials" });
 
-    if (!isMatch) return res.status(400).json({ error: "Wrong password" });
+        const tech = result.rows[0];
 
-    const token = jwt.sign(
-      { id: tech.id, role: "technician" },
-      process.env.JWT_SECRET,
-      { expiresIn: "7d" }
-    );
+        const match = await bcryptjs.compare(password, tech.password);
+        if (!match)
+            return res.status(401).json({ message: "Invalid credentials" });
 
-    res.json({ success: true, token, tech });
+        const token = jwt.sign(
+            { id: tech.id, role: "technician" },
+            process.env.JWT_SECRET,
+            { expiresIn: "7d" }
+        );
 
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+        res.json({ message: "Login successful", token, tech });
+    } catch (err) {
+        console.error("Technician login error:", err);
+        res.status(500).json({ message: "Server error" });
+    }
 });
 
 export default router;

@@ -1,36 +1,43 @@
 import express from "express";
-import bcrypt from "bcryptjs";
+import pool from "../config/db.js";
 import jwt from "jsonwebtoken";
-import db from "../db.js";
+import bcryptjs from "bcryptjs";
 
 const router = express.Router();
 
+// ADMIN LOGIN
 router.post("/login", async (req, res) => {
-  try {
     const { email, password } = req.body;
 
-    const admin = await db.oneOrNone(
-      "SELECT * FROM admin WHERE email=$1",
-      [email]
-    );
+    if (!email || !password)
+        return res.status(400).json({ message: "Email and password required" });
 
-    if (!admin) return res.status(400).json({ error: "Admin not found" });
+    try {
+        const result = await pool.query(
+            "SELECT * FROM admins WHERE email = $1 LIMIT 1",
+            [email]
+        );
 
-    const isMatch = await bcrypt.compare(password, admin.password);
+        if (result.rows.length === 0)
+            return res.status(401).json({ message: "Invalid credentials" });
 
-    if (!isMatch) return res.status(400).json({ error: "Wrong password" });
+        const admin = result.rows[0];
 
-    const token = jwt.sign(
-      { id: admin.id, role: "admin" },
-      process.env.JWT_SECRET,
-      { expiresIn: "7d" }
-    );
+        const match = await bcryptjs.compare(password, admin.password);
+        if (!match)
+            return res.status(401).json({ message: "Invalid credentials" });
 
-    res.json({ success: true, token });
+        const token = jwt.sign(
+            { id: admin.id, role: "admin" },
+            process.env.JWT_SECRET,
+            { expiresIn: "7d" }
+        );
 
-  } catch (err) {
-    res.status(500).json({ error: "Server error" });
-  }
+        res.json({ message: "Login successful", token, admin });
+    } catch (err) {
+        console.error("Admin login error:", err);
+        res.status(500).json({ message: "Server error" });
+    }
 });
 
 export default router;

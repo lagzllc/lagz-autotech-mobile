@@ -1,10 +1,10 @@
-// backend/src/server.js
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import dotenv from "dotenv";
 
 dotenv.config();
+console.log("DATABASE_URL LOADED:", process.env.DATABASE_URL);
 
 const app = express();
 
@@ -43,7 +43,7 @@ app.get("/", (req, res) => {
 });
 
 // START SERVER
-const PORT = process.env.PORT || 10000;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`API Live on ${PORT}`);
 });
