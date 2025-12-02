@@ -9,8 +9,9 @@ const router = express.Router();
 router.post("/login", async (req, res) => {
     const { email, password } = req.body;
 
-    if (!email || !password)
+    if (!email || !password) {
         return res.status(400).json({ message: "Email and password required" });
+    }
 
     try {
         const result = await pool.query(
@@ -18,14 +19,16 @@ router.post("/login", async (req, res) => {
             [email]
         );
 
-        if (result.rows.length === 0)
+        if (result.rows.length === 0) {
             return res.status(401).json({ message: "Invalid credentials" });
+        }
 
         const admin = result.rows[0];
 
         const match = await bcryptjs.compare(password, admin.password);
-        if (!match)
+        if (!match) {
             return res.status(401).json({ message: "Invalid credentials" });
+        }
 
         const token = jwt.sign(
             { id: admin.id, role: "admin" },
@@ -33,10 +36,11 @@ router.post("/login", async (req, res) => {
             { expiresIn: "7d" }
         );
 
-        res.json({ message: "Login successful", token, admin });
+        return res.json({ message: "Login successful", token, admin });
+
     } catch (err) {
         console.error("Admin login error:", err);
-        res.status(500).json({ message: "Server error" });
+        return res.status(500).json({ message: "Server error" });
     }
 });
 
