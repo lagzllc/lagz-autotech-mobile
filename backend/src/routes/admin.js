@@ -1,66 +1,35 @@
-// backend/src/routes/admin.js
-
 import express from "express";
-import adminAuth from "../middleware/adminAuth.js";
-import pool from "../config/db.js";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import db from "../db.js";
 
 const router = express.Router();
 
-/* ---------------------------
-   GET ALL BOOKINGS
----------------------------- */
-router.get("/bookings", adminAuth, async (req, res) => {
+router.post("/login", async (req, res) => {
   try {
-    const result = await pool.query(
-      `SELECT b.*, t.name AS tech_name
-       FROM bookings b
-       LEFT JOIN technicians t ON b.technician_id = t.id
-       ORDER BY b.id DESC`
-    );
-    res.json({ bookings: result.rows });
-  } catch (err) {
-    res.status(500).json({ error: "Failed to fetch bookings" });
-  }
-});
+    const { email, password } = req.body;
 
-/* ---------------------------
-   UPDATE BOOKING
----------------------------- */
-router.put("/booking/:id", adminAuth, async (req, res) => {
-  const { id } = req.params;
-  const { technician_id, status } = req.body;
-
-  try {
-    const result = await pool.query(
-      `UPDATE bookings
-       SET technician_id = $1, status = $2
-       WHERE id = $3
-       RETURNING *`,
-      [technician_id, status, id]
+    const admin = await db.oneOrNone(
+      "SELECT * FROM admin WHERE email=$1",
+      [email]
     );
 
-    res.json({ success: true, booking: result.rows[0] });
-  } catch (err) {
-    res.status(500).json({ error: "Failed to update booking" });
-  }
-});
+    if (!admin) return res.status(400).json({ error: "Admin not found" });
 
-/* ---------------------------
-   ADMIN STATS
----------------------------- */
-router.get("/stats", adminAuth, async (req, res) => {
-  try {
-    const stats = await pool.query(`
-      SELECT
-        (SELECT COUNT(*) FROM bookings) AS total,
-        (SELECT COUNT(*) FROM bookings WHERE status='pending') AS pending,
-        (SELECT COUNT(*) FROM bookings WHERE status='completed') AS completed,
-        (SELECT COUNT(*) FROM technicians) AS techs
-    `);
+    const isMatch = await bcrypt.compare(password, admin.password);
 
-    res.json(stats.rows[0]);
+    if (!isMatch) return res.status(400).json({ error: "Wrong password" });
+
+    const token = jwt.sign(
+      { id: admin.id, role: "admin" },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    res.json({ success: true, token });
+
   } catch (err) {
-    res.status(500).json({ error: "Failed to load stats" });
+    res.status(500).json({ error: "Server error" });
   }
 });
 
