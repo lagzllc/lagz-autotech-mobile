@@ -1,48 +1,61 @@
-// frontend/src/pages/Home.jsx
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 
 export default function Home() {
   return (
-    <motion.div
-      className="min-h-screen bg-gray-100"
-      initial={{ opacity: 0, y: 40 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.7 }}
-    >
-      {/* HERO */}
-      <section className="bg-primary text-white text-center py-32 shadow-lg">
+    <div className="bg-gray-50">
+      {/* HERO SECTION */}
+      <div className="text-center py-20 bg-blue-700 text-white">
         <motion.h1
-          className="text-5xl font-extrabold mb-4"
-          initial={{ opacity: 0, y: -20 }}
+          initial={{ opacity: 0, y: -40 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
+          transition={{ duration: 0.8 }}
+          className="text-5xl font-extrabold"
         >
-          Premium Mobile Auto Repair
+          Lagz AutoTech Mobile
         </motion.h1>
 
         <motion.p
-          className="text-xl mb-8"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+          className="mt-4 text-xl"
         >
-          Fast. Professional. At your home or office.
+          Premier mobile mechanic services at your doorstep.
         </motion.p>
 
         <motion.div
-          initial={{ scale: 0.6 }}
-          animate={{ scale: 1 }}
-          transition={{ duration: 0.5, delay: 0.6 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1 }}
         >
           <Link
             to="/booking"
-            className="px-6 py-3 bg-white text-primary font-semibold rounded-full shadow hover:scale-110 transition"
+            className="mt-6 inline-block bg-white text-blue-700 px-6 py-3 rounded font-bold shadow hover:scale-105 transition"
           >
-            Book an Appointment
+            Book Service
           </Link>
         </motion.div>
-      </section>
-    </motion.div>
+      </div>
+
+      {/* FEATURES */}
+      <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto p-10">
+        {[
+          "Full-Service Mobile Repairs",
+          "Certified Technicians",
+          "Fast Same-Day Booking",
+        ].map((text, idx) => (
+          <motion.div
+            key={idx}
+            initial={{ opacity: 0, scale: 0.8 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6 }}
+            className="bg-white rounded shadow p-6 text-center font-semibold"
+          >
+            {text}
+          </motion.div>
+        ))}
+      </div>
+    </div>
   );
 }

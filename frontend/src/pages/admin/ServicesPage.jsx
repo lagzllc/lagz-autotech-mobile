@@ -1,5 +1,4 @@
-// frontend/src/pages/admin/ServicesPage.jsx
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   adminGetServices,
@@ -14,7 +13,7 @@ export default function ServicesPage() {
   const [form, setForm] = useState({
     name: "",
     price: "",
-    description: "",
+    description: ""
   });
 
   useEffect(() => {
@@ -46,7 +45,11 @@ export default function ServicesPage() {
   }
 
   return (
-    <motion.div className="p-8" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+    <motion.div
+      className="p-8"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+    >
       <h1 className="text-3xl font-bold mb-6">Services</h1>
 
       {/* FORM */}
@@ -100,12 +103,11 @@ export default function ServicesPage() {
               key={s.id}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="border-t"
+              className="border-b"
             >
               <td className="p-3">{s.name}</td>
               <td className="p-3">${s.price}</td>
               <td className="p-3">{s.description}</td>
-
               <td className="p-3 flex gap-3">
                 <button
                   className="bg-yellow-500 text-white px-3 py-1 rounded"

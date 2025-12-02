@@ -1,6 +1,4 @@
-// frontend/src/pages/admin/TechniciansPage.jsx
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
 import {
   getTechnicians,
   createTechnician,
@@ -9,14 +7,13 @@ import {
 } from "../../lib/api";
 
 export default function TechniciansPage() {
-  const [techs, setTechs] = useState([]);
+  const [list, setList] = useState([]);
+  const [editing, setEditing] = useState(null);
   const [form, setForm] = useState({
     name: "",
     email: "",
-    phone: "",
-    password: "",
+    phone: ""
   });
-  const [editing, setEditing] = useState(null);
 
   useEffect(() => {
     load();
@@ -24,7 +21,7 @@ export default function TechniciansPage() {
 
   async function load() {
     const data = await getTechnicians();
-    setTechs(data.technicians || []);
+    setList(data.technicians || []);
   }
 
   async function handleSubmit(e) {
@@ -36,7 +33,7 @@ export default function TechniciansPage() {
       await createTechnician(form);
     }
 
-    setForm({ name: "", email: "", phone: "", password: "" });
+    setForm({ name: "", email: "", phone: "" });
     setEditing(null);
     load();
   }
@@ -47,19 +44,10 @@ export default function TechniciansPage() {
   }
 
   return (
-    <motion.div
-      className="p-8"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-    >
+    <div className="p-8">
       <h1 className="text-3xl font-bold mb-6">Technicians</h1>
 
-      {/* FORM */}
-      <form onSubmit={handleSubmit} className="bg-white p-4 shadow rounded mb-8">
-        <h2 className="text-xl font-semibold mb-4">
-          {editing ? "Edit Technician" : "Add Technician"}
-        </h2>
-
+      <form className="bg-white shadow p-4 rounded mb-8" onSubmit={handleSubmit}>
         <input
           className="border p-2 w-full mb-2"
           placeholder="Name"
@@ -81,67 +69,49 @@ export default function TechniciansPage() {
           onChange={(e) => setForm({ ...form, phone: e.target.value })}
         />
 
-        {!editing && (
-          <input
-            className="border p-2 w-full mb-2"
-            type="password"
-            placeholder="Password"
-            value={form.password}
-            onChange={(e) => setForm({ ...form, password: e.target.value })}
-          />
-        )}
-
         <button className="bg-blue-600 text-white px-4 py-2 rounded">
           {editing ? "Update" : "Create"}
         </button>
       </form>
 
-      {/* TABLE */}
       <table className="min-w-full bg-white shadow rounded">
         <thead>
           <tr className="bg-gray-200">
             <th className="p-3">Name</th>
             <th className="p-3">Email</th>
             <th className="p-3">Phone</th>
-            <th className="p-3">Status</th>
             <th className="p-3">Actions</th>
           </tr>
         </thead>
 
         <tbody>
-          {techs.map((t) => (
-            <motion.tr
-              key={t.id}
-              className="border-b"
-              whileHover={{ scale: 1.02 }}
-            >
+          {list.map((t) => (
+            <tr key={t.id} className="border-b">
               <td className="p-3">{t.name}</td>
               <td className="p-3">{t.email}</td>
               <td className="p-3">{t.phone}</td>
-              <td className="p-3">{t.status}</td>
-
               <td className="p-3 flex gap-3">
                 <button
-                  className="bg-yellow-500 text-white px-3 py-1 rounded"
+                  className="bg-yellow-500 px-3 py-1 text-white rounded"
                   onClick={() => {
-                    setForm(t);
                     setEditing(t.id);
+                    setForm(t);
                   }}
                 >
                   Edit
                 </button>
 
                 <button
-                  className="bg-red-500 text-white px-3 py-1 rounded"
+                  className="bg-red-600 px-3 py-1 text-white rounded"
                   onClick={() => remove(t.id)}
                 >
                   Delete
                 </button>
               </td>
-            </motion.tr>
+            </tr>
           ))}
         </tbody>
       </table>
-    </motion.div>
+    </div>
   );
 }

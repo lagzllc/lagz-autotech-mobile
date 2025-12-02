@@ -1,27 +1,26 @@
-// frontend/src/pages/admin/AdminBookings.jsx
-
+// frontend/src/pages/admin/AdminDashboard.jsx
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { getAdminBookings, updateBookingAdmin, getTechnicians } from "../../lib/api";
+import { getAdminStats } from "../../lib/api";
 
-export default function AdminBookings() {
-  const [bookings, setBookings] = useState([]);
-  const [technicians, setTechnicians] = useState([]);
+export default function AdminDashboard() {
+  const [stats, setStats] = useState({
+    bookings: 0,
+    technicians: 0,
+    revenue: 0,
+  });
 
   useEffect(() => {
-    load();
+    loadStats();
   }, []);
 
-  async function load() {
-    const b = await getAdminBookings();
-    const t = await getTechnicians();
-    setBookings(b.bookings || []);
-    setTechnicians(t.technicians || []);
-  }
-
-  async function updateBooking(id, techId, status) {
-    await updateBookingAdmin(id, techId, status);
-    load();
+  async function loadStats() {
+    const data = await getAdminStats();
+    setStats({
+      bookings: data.bookings || 0,
+      technicians: data.technicians || 0,
+      revenue: data.revenue || 0,
+    });
   }
 
   return (
@@ -30,57 +29,37 @@ export default function AdminBookings() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
     >
-      <h1 className="text-3xl font-bold mb-6">Manage Bookings</h1>
+      <h1 className="text-3xl font-bold mb-6">Admin Dashboard</h1>
 
-      <div className="overflow-x-auto">
-        <table className="min-w-full bg-white shadow rounded">
-          <thead>
-            <tr className="bg-gray-200">
-              <th className="p-3">ID</th>
-              <th className="p-3">Customer</th>
-              <th className="p-3">Service</th>
-              <th className="p-3">Technician</th>
-              <th className="p-3">Status</th>
-              <th className="p-3">Actions</th>
-            </tr>
-          </thead>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-          <tbody>
-            {bookings.map((b) => (
-              <tr key={b.id} className="border-t">
-                <td className="p-3">{b.id}</td>
-                <td className="p-3">{b.customer_name}</td>
-                <td className="p-3">{b.service_name}</td>
+        {/* BOOKINGS */}
+        <motion.div 
+          className="bg-white shadow p-6 rounded"
+          whileHover={{ scale: 1.03 }}
+        >
+          <h2 className="text-xl font-semibold">Total Bookings</h2>
+          <p className="text-4xl font-bold mt-2">{stats.bookings}</p>
+        </motion.div>
 
-                <td className="p-3">
-                  <select
-                    value={b.technician_id || ""}
-                    onChange={(e) => updateBooking(b.id, e.target.value, b.status)}
-                    className="border p-2 rounded"
-                  >
-                    <option value="">Unassigned</option>
-                    {technicians.map((t) => (
-                      <option key={t.id} value={t.id}>
-                        {t.name}
-                      </option>
-                    ))}
-                  </select>
-                </td>
+        {/* TECHNICIANS */}
+        <motion.div 
+          className="bg-white shadow p-6 rounded"
+          whileHover={{ scale: 1.03 }}
+        >
+          <h2 className="text-xl font-semibold">Technicians</h2>
+          <p className="text-4xl font-bold mt-2">{stats.technicians}</p>
+        </motion.div>
 
-                <td className="p-3">{b.status}</td>
+        {/* REVENUE */}
+        <motion.div 
+          className="bg-white shadow p-6 rounded"
+          whileHover={{ scale: 1.03 }}
+        >
+          <h2 className="text-xl font-semibold">Total Revenue</h2>
+          <p className="text-4xl font-bold mt-2">${stats.revenue}</p>
+        </motion.div>
 
-                <td className="p-3">
-                  <button
-                    className="px-3 py-1 bg-green-600 text-white rounded"
-                    onClick={() => updateBooking(b.id, b.technician_id, "completed")}
-                  >
-                    Mark Completed
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
       </div>
     </motion.div>
   );
