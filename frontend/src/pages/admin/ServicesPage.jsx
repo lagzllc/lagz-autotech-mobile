@@ -5,7 +5,7 @@ import {
   adminGetServices,
   createService,
   updateService,
-  deleteService,
+  deleteService
 } from "../../lib/api";
 
 export default function ServicesPage() {
@@ -46,11 +46,7 @@ export default function ServicesPage() {
   }
 
   return (
-    <motion.div
-      className="p-8"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-    >
+    <motion.div className="p-8" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
       <h1 className="text-3xl font-bold mb-6">Services</h1>
 
       {/* FORM */}
@@ -79,9 +75,7 @@ export default function ServicesPage() {
           placeholder="Description"
           rows="3"
           value={form.description}
-          onChange={(e) =>
-            setForm({ ...form, description: e.target.value })
-          }
+          onChange={(e) => setForm({ ...form, description: e.target.value })}
         ></textarea>
 
         <button className="bg-blue-600 text-white px-4 py-2 rounded">
@@ -104,8 +98,9 @@ export default function ServicesPage() {
           {services.map((s) => (
             <motion.tr
               key={s.id}
-              className="border-b"
-              whileHover={{ scale: 1.01 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="border-t"
             >
               <td className="p-3">{s.name}</td>
               <td className="p-3">${s.price}</td>

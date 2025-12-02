@@ -24,11 +24,7 @@ export default function AdminBookings() {
   }
 
   return (
-    <motion.div
-      className="p-8"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-    >
+    <motion.div className="p-8" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
       <h1 className="text-3xl font-bold mb-6">Manage Bookings</h1>
 
       <div className="overflow-x-auto">
@@ -46,26 +42,16 @@ export default function AdminBookings() {
 
           <tbody>
             {bookings.map((b) => (
-              <motion.tr
-                key={b.id}
-                className="border-b"
-                whileHover={{ scale: 1.01 }}
-              >
+              <motion.tr key={b.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                 <td className="p-3">{b.id}</td>
-                <td className="p-3">
-                  {b.customer_name}
-                  <br />
-                  <small>{b.customer_email}</small>
-                </td>
-                <td className="p-3">{b.service_id}</td>
+                <td className="p-3">{b.customer_name}</td>
+                <td className="p-3">{b.service_name}</td>
 
                 <td className="p-3">
                   <select
-                    className="border p-2"
-                    defaultValue={b.technician_id}
-                    onChange={(e) =>
-                      updateBooking(b.id, e.target.value, b.status)
-                    }
+                    value={b.technician_id || ""}
+                    className="border p-2 rounded"
+                    onChange={(e) => updateBooking(b.id, e.target.value, b.status)}
                   >
                     <option value="">Unassigned</option>
                     {technicians.map((t) => (
@@ -76,28 +62,14 @@ export default function AdminBookings() {
                   </select>
                 </td>
 
-                <td className="p-3">
-                  <select
-                    className="border p-2"
-                    defaultValue={b.status}
-                    onChange={(e) =>
-                      updateBooking(b.id, b.technician_id, e.target.value)
-                    }
-                  >
-                    <option value="pending">Pending</option>
-                    <option value="in-progress">In Progress</option>
-                    <option value="completed">Completed</option>
-                  </select>
-                </td>
+                <td className="p-3 capitalize">{b.status}</td>
 
-                <td className="p-3">
+                <td className="p-3 flex gap-3">
                   <button
-                    onClick={() =>
-                      updateBooking(b.id, b.technician_id, "completed")
-                    }
-                    className="bg-green-500 text-white px-4 py-2 rounded"
+                    className="px-3 py-1 bg-green-600 text-white rounded"
+                    onClick={() => updateBooking(b.id, b.technician_id, "completed")}
                   >
-                    ✓ Complete
+                    Complete
                   </button>
                 </td>
               </motion.tr>
