@@ -1,50 +1,49 @@
-// frontend/src/App.jsx
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+// Layout
 import Navbar from "./components/Navbar.jsx";
 import Footer from "./components/Footer.jsx";
 
-// Public pages
+// Public Pages
 import Home from "./pages/Home.jsx";
 import Services from "./pages/Services.jsx";
 import Booking from "./pages/Booking.jsx";
 import Contact from "./pages/Contact.jsx";
 
-// Tech pages
-import TechLogin from "./pages/tech/Login.jsx";
-import TechDashboard from "./pages/tech/Dashboard.jsx";
-
-// Admin pages (ONLY from src/pages/admin)
+// Admin Pages
 import AdminLogin from "./pages/admin/AdminLogin.jsx";
 import AdminDashboard from "./pages/admin/AdminDashboard.jsx";
-import AdminBookings from "./pages/admin/AdminBookings.jsx";
-import ServicesPage from "./pages/admin/ServicesPage.jsx";
-import TechniciansPage from "./pages/admin/TechniciansPage.jsx";
+
+// Technician Pages
+import TechLogin from "./pages/tech/TechLogin.jsx";
+import TechDashboard from "./pages/tech/Dashboard.jsx";
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <Navbar />
+    <Router>
+      <div className="min-h-screen flex flex-col bg-gray-50">
+        <Navbar />
 
-      <Routes>
-        {/* Public */}
-        <Route path="/" element={<Home />} />
-        <Route path="/services" element={<Services />} />
-        <Route path="/booking" element={<Booking />} />
-        <Route path="/contact" element={<Contact />} />
+        <main className="flex-grow">
+          <Routes>
+            {/* Public */}
+            <Route path="/" element={<Home />} />
+            <Route path="/services" element={<Services />} />
+            <Route path="/booking" element={<Booking />} />
+            <Route path="/contact" element={<Contact />} />
 
-        {/* Tech */}
-        <Route path="/tech/login" element={<TechLogin />} />
-        <Route path="/tech/dashboard" element={<TechDashboard />} />
-      {/* ADMIN ROUTES */}
-      <Route path="/admin/login" element={<AdminLogin />} />
-      <Route path="/admin/dashboard" element={<AdminDashboard />} />
-      <Route path="/admin/bookings" element={<AdminBookings />} />
-      <Route path="/admin/services" element={<ServicesPage />} />
-      <Route path="/admin/technicians" element={<TechniciansPage />} />
-      </Routes>
+            {/* Admin */}
+            <Route path="/admin" element={<AdminLogin />} />
+            <Route path="/admin/dashboard" element={<AdminDashboard />} />
 
-      <Footer />
-    </BrowserRouter>
+            {/* Technician */}
+            <Route path="/tech" element={<TechLogin />} />
+            <Route path="/tech/dashboard" element={<TechDashboard />} />
+          </Routes>
+        </main>
+
+        <Footer />
+      </div>
+    </Router>
   );
 }

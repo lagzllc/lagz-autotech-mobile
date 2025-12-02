@@ -1,8 +1,8 @@
 import { useState } from "react";
 import axios from "axios";
-import { Shield, Mail, Lock } from "lucide-react";
+import { Wrench, Mail, Lock } from "lucide-react";
 
-export default function AdminLogin() {
+export default function TechLogin() {
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
 
@@ -15,14 +15,14 @@ export default function AdminLogin() {
 
     try {
       const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/admin/login`,
+        `${import.meta.env.VITE_API_URL}/api/tech/login`,
         form
       );
 
-      localStorage.setItem("adminToken", res.data.token);
-      window.location.href = "/admin/dashboard";
+      localStorage.setItem("techToken", res.data.token);
+      window.location.href = "/tech/dashboard";
     } catch (err) {
-      setError("Invalid email or password");
+      setError("Invalid technician credentials");
     }
   };
 
@@ -31,8 +31,8 @@ export default function AdminLogin() {
       <div className="bg-white shadow-xl p-10 rounded-xl w-full max-w-md">
 
         <div className="flex flex-col items-center text-center mb-6">
-          <Shield size={50} className="text-yellow-500" />
-          <h1 className="text-3xl font-bold mt-3">Admin Login</h1>
+          <Wrench size={50} className="text-yellow-500" />
+          <h1 className="text-3xl font-bold mt-3">Technician Login</h1>
         </div>
 
         <form className="space-y-5" onSubmit={login}>

@@ -1,118 +1,183 @@
-// frontend/src/pages/Booking.jsx
-
-import { useState, useEffect } from "react";
-import { getServices, createBooking } from "../lib/api";
+import { useState } from "react";
+import { Phone, Calendar, Car, User, Mail, MapPin } from "lucide-react";
 
 export default function Booking() {
-  const [services, setServices] = useState([]);
   const [form, setForm] = useState({
-    customer_name: "",
-    customer_email: "",
-    customer_phone: "",
-    vehicle_make: "",
-    vehicle_model: "",
-    vehicle_year: "",
-    service_id: "",
-    technician_id: 1,
-    appointment_date: "",
+    name: "",
+    email: "",
+    phone: "",
+    vehicle: "",
+    service: "",
+    address: "",
+    date: "",
   });
 
-  useEffect(() => {
-    async function load() {
-      const list = await getServices();
-      setServices(list.services || []);
-    }
-    load();
-  }, []);
-
-  function handleChange(e) {
+  const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
-  }
+  };
 
-  async function handleSubmit(e) {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const res = await createBooking(form);
-    alert("Booking submitted!");
-  }
+    const response = await fetch("https://api.lagzautotechmobile.com/api/bookings", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(form),
+    });
+
+    if (response.ok) {
+      alert("Booking submitted! A technician will contact you shortly.");
+      setForm({
+        name: "",
+        email: "",
+        phone: "",
+        vehicle: "",
+        service: "",
+        address: "",
+        date: "",
+      });
+    } else {
+      alert("Error submitting booking. Try again.");
+    }
+  };
 
   return (
-    <div className="booking-page">
-      <h1>Book a Service</h1>
+    <div className="w-full min-h-screen bg-gray-50 py-16 px-6">
+      <h1 className="text-4xl font-bold text-center mb-4">Book a Service</h1>
+      <p className="text-center text-gray-600 max-w-xl mx-auto mb-10">
+        Fill out the form below and our technician will contact you to confirm your appointment.
+      </p>
 
-      <form onSubmit={handleSubmit}>
-        <input
-          name="customer_name"
-          placeholder="Your Name"
-          value={form.customer_name}
-          onChange={handleChange}
-          required
-        />
+      <form
+        onSubmit={handleSubmit}
+        className="max-w-3xl mx-auto bg-white shadow-lg rounded-xl p-8 space-y-6"
+      >
+        {/* NAME */}
+        <div>
+          <label className="font-semibold flex items-center gap-2 mb-1">
+            <User size={18} /> Full Name
+          </label>
+          <input
+            type="text"
+            name="name"
+            value={form.name}
+            onChange={handleChange}
+            placeholder="John Doe"
+            className="w-full p-3 rounded border focus:ring-2 focus:ring-yellow-400"
+            required
+          />
+        </div>
 
-        <input
-          name="customer_email"
-          placeholder="Your Email"
-          value={form.customer_email}
-          onChange={handleChange}
-          required
-        />
+        {/* EMAIL */}
+        <div>
+          <label className="font-semibold flex items-center gap-2 mb-1">
+            <Mail size={18} /> Email Address
+          </label>
+          <input
+            type="email"
+            name="email"
+            value={form.email}
+            onChange={handleChange}
+            placeholder="youremail@example.com"
+            className="w-full p-3 rounded border focus:ring-2 focus:ring-yellow-400"
+          />
+        </div>
 
-        <input
-          name="customer_phone"
-          placeholder="Phone Number"
-          value={form.customer_phone}
-          onChange={handleChange}
-          required
-        />
+        {/* PHONE */}
+        <div>
+          <label className="font-semibold flex items-center gap-2 mb-1">
+            <Phone size={18} /> Phone Number
+          </label>
+          <input
+            type="text"
+            name="phone"
+            value={form.phone}
+            onChange={handleChange}
+            placeholder="719-510-6453"
+            className="w-full p-3 rounded border focus:ring-2 focus:ring-yellow-400"
+            required
+          />
+        </div>
 
-        <input
-          name="vehicle_make"
-          placeholder="Vehicle Make"
-          value={form.vehicle_make}
-          onChange={handleChange}
-          required
-        />
+        {/* VEHICLE */}
+        <div>
+          <label className="font-semibold flex items-center gap-2 mb-1">
+            <Car size={18} /> Vehicle Make & Model
+          </label>
+          <input
+            type="text"
+            name="vehicle"
+            value={form.vehicle}
+            onChange={handleChange}
+            placeholder="Toyota Camry, Ford F150..."
+            className="w-full p-3 rounded border focus:ring-2 focus:ring-yellow-400"
+            required
+          />
+        </div>
 
-        <input
-          name="vehicle_model"
-          placeholder="Vehicle Model"
-          value={form.vehicle_model}
-          onChange={handleChange}
-          required
-        />
+        {/* SERVICE */}
+        <div>
+          <label className="font-semibold flex items-center gap-2 mb-1">
+            <Wrench size={18} /> Service Needed
+          </label>
+          <input
+            type="text"
+            name="service"
+            value={form.service}
+            onChange={handleChange}
+            placeholder="Oil change, brake repair, diagnostics..."
+            className="w-full p-3 rounded border focus:ring-2 focus:ring-yellow-400"
+            required
+          />
+        </div>
 
-        <input
-          name="vehicle_year"
-          placeholder="Vehicle Year"
-          value={form.vehicle_year}
-          onChange={handleChange}
-          required
-        />
+        {/* ADDRESS */}
+        <div>
+          <label className="font-semibold flex items-center gap-2 mb-1">
+            <MapPin size={18} /> Service Address
+          </label>
+          <input
+            type="text"
+            name="address"
+            value={form.address}
+            onChange={handleChange}
+            placeholder="Your home, work, or location"
+            className="w-full p-3 rounded border focus:ring-2 focus:ring-yellow-400"
+            required
+          />
+        </div>
 
-        <select
-          name="service_id"
-          value={form.service_id}
-          onChange={handleChange}
-          required
+        {/* DATE */}
+        <div>
+          <label className="font-semibold flex items-center gap-2 mb-1">
+            <Calendar size={18} /> Preferred Date
+          </label>
+          <input
+            type="date"
+            name="date"
+            value={form.date}
+            onChange={handleChange}
+            className="w-full p-3 rounded border focus:ring-2 focus:ring-yellow-400"
+          />
+        </div>
+
+        <button
+          type="submit"
+          className="w-full bg-black text-white py-3 rounded font-semibold hover:bg-gray-800 transition"
         >
-          <option value="">Select a service</option>
-          {services.map((srv) => (
-            <option key={srv.id} value={srv.id}>
-              {srv.name}
-            </option>
-          ))}
-        </select>
-
-        <input
-          type="datetime-local"
-          name="appointment_date"
-          value={form.appointment_date}
-          onChange={handleChange}
-          required
-        />
-
-        <button type="submit">Book Service</button>
+          Submit Booking
+        </button>
       </form>
+
+      {/* CALL INSTEAD */}
+      <div className="text-center mt-10">
+        <a
+          href="tel:+17195106453"
+          className="inline-flex items-center gap-2 text-yellow-600 font-semibold hover:text-yellow-500"
+        >
+          <Phone size={18} /> Prefer to call? Tap here: (719) 510-6453
+        </a>
+      </div>
     </div>
   );
 }
