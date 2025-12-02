@@ -1,5 +1,7 @@
-import { useState } from "react";
-import api from "../lib/api";
+// frontend/src/pages/Booking.jsx
+
+import { useState, useEffect } from "react";
+import { getServices, createBooking } from "../lib/api";
 
 export default function Booking() {
   const [services, setServices] = useState([]);
@@ -18,97 +20,98 @@ export default function Booking() {
   useEffect(() => {
     async function load() {
       const list = await getServices();
-      setServices(list);
+      setServices(list.services || []);
     }
     load();
   }, []);
 
-  function setField(key, value) {
-    setForm(prev => ({ ...prev, [key]: value }));
+  function handleChange(e) {
+    setForm({ ...form, [e.target.name]: e.target.value });
   }
 
-  async function submit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
-    const res = await createBooking(form);
 
-    if (res.success) {
-      alert("Your booking has been submitted! We will contact you shortly.");
-    } else {
-      alert("Booking failed. Please try again.");
-    }
+    const res = await createBooking(form);
+    alert("Booking submitted!");
   }
 
   return (
-    <div className="p-6 max-w-xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6">Book a Service</h1>
+    <div className="booking-page">
+      <h1>Book a Service</h1>
 
-      <form onSubmit={submit} className="space-y-4">
-
+      <form onSubmit={handleSubmit}>
         <input
-          className="w-full border p-2"
-          placeholder="Full Name"
+          name="customer_name"
+          placeholder="Your Name"
           value={form.customer_name}
-          onChange={(e) => setField("customer_name", e.target.value)}
+          onChange={handleChange}
+          required
         />
 
         <input
-          className="w-full border p-2"
-          placeholder="Email"
+          name="customer_email"
+          placeholder="Your Email"
           value={form.customer_email}
-          onChange={(e) => setField("customer_email", e.target.value)}
+          onChange={handleChange}
+          required
         />
 
         <input
-          className="w-full border p-2"
-          placeholder="Phone"
+          name="customer_phone"
+          placeholder="Phone Number"
           value={form.customer_phone}
-          onChange={(e) => setField("customer_phone", e.target.value)}
+          onChange={handleChange}
+          required
         />
 
         <input
-          className="w-full border p-2"
-          placeholder="Vehicle Make (e.g. Honda)"
+          name="vehicle_make"
+          placeholder="Vehicle Make"
           value={form.vehicle_make}
-          onChange={(e) => setField("vehicle_make", e.target.value)}
+          onChange={handleChange}
+          required
         />
 
         <input
-          className="w-full border p-2"
-          placeholder="Vehicle Model (e.g. Civic)"
+          name="vehicle_model"
+          placeholder="Vehicle Model"
           value={form.vehicle_model}
-          onChange={(e) => setField("vehicle_model", e.target.value)}
+          onChange={handleChange}
+          required
         />
 
         <input
-          className="w-full border p-2"
+          name="vehicle_year"
           placeholder="Vehicle Year"
           value={form.vehicle_year}
-          onChange={(e) => setField("vehicle_year", e.target.value)}
+          onChange={handleChange}
+          required
         />
 
         <select
-          className="w-full border p-2"
+          name="service_id"
           value={form.service_id}
-          onChange={(e) => setField("service_id", e.target.value)}
+          onChange={handleChange}
+          required
         >
-          <option value="">Select Service</option>
-          {services.map((s) => (
-            <option key={s.id} value={s.id}>
-              {s.name} — ${s.price}
+          <option value="">Select a service</option>
+          {services.map((srv) => (
+            <option key={srv.id} value={srv.id}>
+              {srv.name}
             </option>
           ))}
         </select>
 
         <input
           type="datetime-local"
-          className="w-full border p-2"
+          name="appointment_date"
           value={form.appointment_date}
-          onChange={(e) => setField("appointment_date", e.target.value)}
+          onChange={handleChange}
+          required
         />
 
-        <button className="w-full bg-blue-600 text-white p-3 rounded">
-          Submit Booking
-        </button>
+        <button type="submit">Book Service</button>
       </form>
     </div>
   );
