@@ -1,112 +1,96 @@
-import { Phone, Wrench, Car, ShieldCheck, ArrowRight } from "lucide-react";
+import React from "react";
 import { Link } from "react-router-dom";
 
 export default function Home() {
   return (
-    <div className="w-full min-h-screen bg-gray-50">
+    <div className="w-full">
       {/* HERO SECTION */}
-      <section className="bg-black text-white py-20 px-6 text-center">
-        <h1 className="text-4xl md:text-5xl font-bold mb-4">
-          Mobile Auto Repair — We Come To You
-        </h1>
-        <p className="text-lg md:text-xl max-w-2xl mx-auto mb-8 text-gray-300">
-          Fast, affordable, and professional auto services delivered at your home, office, or roadside.
-        </p>
-
-        {/* ACTION BUTTONS */}
-        <div className="flex flex-col md:flex-row justify-center gap-4">
-          <a
-            href="tel:+17195106453"
-            className="bg-yellow-400 text-black font-semibold px-6 py-3 rounded flex items-center justify-center gap-2 hover:bg-yellow-300 transition"
-          >
-            <Phone size={20} /> Call Us Now
-          </a>
-
+      <section className="bg-secondary text-white py-20">
+        <div className="container mx-auto px-4 text-center">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">
+            Fast. Reliable. Mobile Auto Repair.
+          </h1>
+          <p className="text-lg md:text-xl mb-6">
+            Professional mobile mechanic serving Colorado Springs — we come to you!
+          </p>
           <Link
-            to="/booking"
-            className="border border-white px-6 py-3 rounded flex items-center justify-center gap-2 hover:bg-white hover:text-black transition"
+            to="/book"
+            className="bg-primary hover:bg-blue-700 text-white px-6 py-3 rounded-lg text-lg"
           >
-            Book a Service <ArrowRight size={18} />
+            Book a Service
           </Link>
         </div>
       </section>
 
-      {/* WHY CHOOSE US */}
-      <section className="py-16 px-6 max-w-5xl mx-auto text-center">
-        <h2 className="text-3xl font-bold mb-6">Why Choose Lagz AutoTech?</h2>
-        <div className="grid md:grid-cols-3 gap-8 mt-10">
+      {/* SERVICES PREVIEW */}
+      <section className="py-16 bg-gray-100">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold text-center text-secondary mb-10">
+            Popular Services
+          </h2>
 
-          {/* Card 1 */}
-          <div className="bg-white rounded-xl shadow p-6">
-            <Wrench className="text-yellow-500 mx-auto" size={40} />
-            <h3 className="text-xl font-semibold mt-4">Certified Technicians</h3>
-            <p className="text-gray-600 mt-2">
-              Highly skilled and experienced mobile technicians available on-demand.
-            </p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="p-6 bg-white rounded-xl shadow">
+              <h3 className="text-xl font-semibold mb-2">Diagnostics</h3>
+              <p className="text-gray-600">
+                Full engine scans + troubleshooting delivered to your location.
+              </p>
+            </div>
+            <div className="p-6 bg-white rounded-xl shadow">
+              <h3 className="text-xl font-semibold mb-2">Brake Repair</h3>
+              <p className="text-gray-600">
+                Brake pads, rotors, and inspections done onsite.
+              </p>
+            </div>
+            <div className="p-6 bg-white rounded-xl shadow">
+              <h3 className="text-xl font-semibold mb-2">Oil Change</h3>
+              <p className="text-gray-600">
+                Fast and clean oil changes at your home or office.
+              </p>
+            </div>
           </div>
 
-          {/* Card 2 */}
-          <div className="bg-white rounded-xl shadow p-6">
-            <Car className="text-yellow-500 mx-auto" size={40} />
-            <h3 className="text-xl font-semibold mt-4">We Come To You</h3>
-            <p className="text-gray-600 mt-2">
-              Home, office, roadside — save time and avoid the towing fees.
-            </p>
-          </div>
-
-          {/* Card 3 */}
-          <div className="bg-white rounded-xl shadow p-6">
-            <ShieldCheck className="text-yellow-500 mx-auto" size={40} />
-            <h3 className="text-xl font-semibold mt-4">Reliable & Affordable</h3>
-            <p className="text-gray-600 mt-2">
-              Transparent pricing and high-quality service you can trust.
-            </p>
+          <div className="text-center mt-10">
+            <Link
+              to="/services"
+              className="text-primary font-semibold hover:underline"
+            >
+              View All Services →
+            </Link>
           </div>
         </div>
       </section>
 
-      {/* SERVICES SECTION */}
-      <section className="bg-gray-100 py-16 px-6 text-center">
-        <h2 className="text-3xl font-bold mb-8">Our Common Services</h2>
+      {/* GOOGLE REVIEWS SECTION */}
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-3xl font-bold text-secondary mb-6">
+            What Customers Are Saying
+          </h2>
+          <p className="text-gray-600 mb-8">
+            Real reviews from customers in Colorado Springs.
+          </p>
 
-        <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-
-          <div className="bg-white p-6 shadow rounded-xl">
-            <h3 className="font-semibold text-xl">Oil Change</h3>
-            <p className="text-gray-600 mt-2">Full synthetic + filter replacement.</p>
+          {/* Elfsight Google Review Widget */}
+          <div className="flex justify-center">
+            <div
+              className="elfsight-app-6804c029-52ee-4caf-8961-2c5ff367b5c0 w-full"
+              data-elfsight-app-lazy
+            ></div>
           </div>
-
-          <div className="bg-white p-6 shadow rounded-xl">
-            <h3 className="font-semibold text-xl">Brake Repair</h3>
-            <p className="text-gray-600 mt-2">Pads, rotors, inspections & replacements.</p>
-          </div>
-
-          <div className="bg-white p-6 shadow rounded-xl">
-            <h3 className="font-semibold text-xl">Engine Diagnostics</h3>
-            <p className="text-gray-600 mt-2">Check engine light, scanning & troubleshooting.</p>
-          </div>
-
         </div>
-
-        <Link
-          to="/services"
-          className="mt-10 inline-block bg-black text-white px-8 py-3 rounded hover:bg-gray-800 transition"
-        >
-          View All Services
-        </Link>
       </section>
 
-      {/* CTA */}
-      <section className="py-20 bg-black text-white text-center">
-        <h2 className="text-3xl font-bold mb-4">Ready To Book Your Service?</h2>
-        <p className="text-gray-300 mb-6">Fast response and professional mobile repair.</p>
-
-        <Link
-          to="/booking"
-          className="bg-yellow-400 text-black font-semibold px-8 py-3 rounded hover:bg-yellow-300 transition"
+      {/* CONTACT CTA */}
+      <section className="bg-primary text-white py-16 text-center">
+        <h2 className="text-3xl font-bold mb-4">Need Immediate Help?</h2>
+        <p className="text-lg mb-6">Call now for fast mobile auto repair service.</p>
+        <a
+          href="tel:7195106453"
+          className="bg-white text-primary font-semibold px-6 py-3 rounded-lg text-lg"
         >
-          Book Now
-        </Link>
+          Call (719) 510-6453
+        </a>
       </section>
     </div>
   );
