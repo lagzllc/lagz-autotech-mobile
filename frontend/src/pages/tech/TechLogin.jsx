@@ -1,72 +1,67 @@
 import { useState } from "react";
 import axios from "axios";
-import { Wrench, Mail, Lock } from "lucide-react";
 
 export default function TechLogin() {
   const [form, setForm] = useState({ email: "", password: "" });
-  const [error, setError] = useState("");
+  const [msg, setMsg] = useState("");
 
-  const update = (e) =>
-    setForm({ ...form, [e.target.name]: e.target.value });
-
-  const login = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
+    setMsg("Verifying...");
 
     try {
       const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/tech/login`,
+        "https://api.lagzautotechmobile.com/api/tech/login",
         form
       );
 
       localStorage.setItem("techToken", res.data.token);
-      window.location.href = "/tech/dashboard";
+      setMsg("Login successful! Redirecting...");
+
+      setTimeout(() => {
+        window.location.href = "/tech/dashboard";
+      }, 800);
     } catch (err) {
-      setError("Invalid technician credentials");
+      setMsg("Invalid technician credentials.");
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center px-6">
-      <div className="bg-white shadow-xl p-10 rounded-xl w-full max-w-md">
+    <div className="pt-28 pb-16 px-6 max-w-md mx-auto">
+      <h1 className="text-4xl font-bold text-center mb-6">Technician Login</h1>
 
-        <div className="flex flex-col items-center text-center mb-6">
-          <Wrench size={50} className="text-yellow-500" />
-          <h1 className="text-3xl font-bold mt-3">Technician Login</h1>
-        </div>
+      <form className="space-y-6" onSubmit={handleSubmit}>
+        <input
+          type="email"
+          placeholder="Technician Email"
+          className="w-full p-3 border rounded"
+          value={form.email}
+          onChange={(e) => setForm({ ...form, email: e.target.value })}
+          required
+        />
 
-        <form className="space-y-5" onSubmit={login}>
-          <div className="flex items-center gap-3 border p-3 rounded-lg">
-            <Mail className="text-gray-500" />
-            <input
-              name="email"
-              type="email"
-              placeholder="Email"
-              className="flex-1 outline-none"
-              onChange={update}
-              required
-            />
-          </div>
+        <input
+          type="password"
+          placeholder="Password"
+          className="w-full p-3 border rounded"
+          value={form.password}
+          onChange={(e) => setForm({ ...form, password: e.target.value })}
+          required
+        />
 
-          <div className="flex items-center gap-3 border p-3 rounded-lg">
-            <Lock className="text-gray-500" />
-            <input
-              name="password"
-              type="password"
-              placeholder="Password"
-              className="flex-1 outline-none"
-              onChange={update}
-              required
-            />
-          </div>
+        <button
+          type="submit"
+          className="w-full bg-black text-white p-3 rounded hover:bg-gray-900 transition"
+        >
+          Login
+        </button>
+      </form>
 
-          <button className="w-full bg-yellow-500 hover:bg-yellow-600 p-3 rounded-lg font-semibold">
-            Login
-          </button>
-        </form>
-
-        {error && <p className="text-red-500 text-center mt-4">{error}</p>}
-      </div>
+      {msg && (
+        <p className="mt-6 text-center text-yellow-500 font-medium text-lg">
+          {msg}
+        </p>
+      )}
     </div>
   );
 }

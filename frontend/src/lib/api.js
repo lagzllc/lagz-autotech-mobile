@@ -220,6 +220,36 @@ export async function createBooking(data) {
 
   return res.json();
 }
+// ===============================
+// ADMIN: GET ALL CUSTOMERS
+// ===============================
+export async function getAdminCustomers(token) {
+  const res = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/customers`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch customers");
+  }
+
+  return res.json();
+}
+// ===============================
+// ADMIN: GET ALL INVOICES
+// ===============================
+export async function getInvoices(token) {
+  const res = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/invoices`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!res.ok) throw new Error("Failed to fetch invoices");
+
+  return res.json();
+}
 
 /* ============================================================
    DEFAULT EXPORT (OPTIONAL)
