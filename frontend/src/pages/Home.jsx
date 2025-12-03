@@ -3,10 +3,10 @@ import { Link } from "react-router-dom";
 
 export default function Home() {
   return (
-    <div className="w-full">
+    <div className="pt-24 w-full">
       {/* HERO SECTION */}
       <section className="bg-secondary text-white py-20">
-        <div className="container mx-auto px-4 text-center">
+        <div className="container max-w-screen-xl mx-auto px-4 text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
             Fast. Reliable. Mobile Auto Repair.
           </h1>
@@ -24,7 +24,7 @@ export default function Home() {
 
       {/* SERVICES PREVIEW */}
       <section className="py-16 bg-gray-100">
-        <div className="container mx-auto px-4">
+        <div className="container max-w-screen-xl mx-auto px-4">
           <h2 className="text-3xl font-bold text-center text-secondary mb-10">
             Popular Services
           </h2>
@@ -61,17 +61,16 @@ export default function Home() {
         </div>
       </section>
 
-      {/* GOOGLE REVIEWS SECTION */}
+      {/* GOOGLE REVIEWS */}
       <section className="py-16 bg-white">
-        <div className="container mx-auto px-4 text-center">
+        <div className="container max-w-screen-xl mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold text-secondary mb-6">
             What Customers Are Saying
           </h2>
           <p className="text-gray-600 mb-8">
-            Real reviews from customers in Colorado Springs.
+            Real reviews from Colorado Springs customers.
           </p>
 
-          {/* Elfsight Google Review Widget */}
           <div className="flex justify-center">
             <div
               className="elfsight-app-6804c029-52ee-4caf-8961-2c5ff367b5c0 w-full"
@@ -84,7 +83,9 @@ export default function Home() {
       {/* CONTACT CTA */}
       <section className="bg-primary text-white py-16 text-center">
         <h2 className="text-3xl font-bold mb-4">Need Immediate Help?</h2>
-        <p className="text-lg mb-6">Call now for fast mobile auto repair service.</p>
+        <p className="text-lg mb-6">
+          Call now for fast mobile auto repair service.
+        </p>
         <a
           href="tel:7195106453"
           className="bg-white text-primary font-semibold px-6 py-3 rounded-lg text-lg"
@@ -95,3 +96,4 @@ export default function Home() {
     </div>
   );
 }
+
