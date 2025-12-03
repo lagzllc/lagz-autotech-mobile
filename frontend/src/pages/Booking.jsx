@@ -1,123 +1,71 @@
 import { useState } from "react";
-import axios from "axios";
+import { createBooking } from "../lib/api";
 
 export default function Booking() {
   const [form, setForm] = useState({
     name: "",
-    phone: "",
     email: "",
-    vehicle: "",
+    phone: "",
     service: "",
     date: "",
+    time: "",
+    notes: "",
+    make: "",
+    model: "",
+    year: "",
+    vin: "",
+    mileage: "",
+    engine: "",
+    drivetrain: ""
   });
 
-  const [message, setMessage] = useState("");
-
-  const handleChange = (e) => {
+  const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setMessage("Submitting...");
-
-    try {
-      const res = await axios.post(
-        "https://api.lagzautotechmobile.com/api/bookings",
-        form
-      );
-
-      setMessage("Booking submitted successfully!");
-      setForm({
-        name: "",
-        phone: "",
-        email: "",
-        vehicle: "",
-        service: "",
-        date: "",
-      });
-    } catch (err) {
-      setMessage("Error submitting booking. Please try again.");
-    }
+    await createBooking(form);
+    alert("Booking submitted!");
   };
 
   return (
-    <div className="pt-24 pb-20 px-6 max-w-3xl mx-auto">
-      <h1 className="text-4xl font-bold text-center mb-8">Book a Service</h1>
+    <div className="max-w-3xl mx-auto p-6">
+      <h1 className="text-3xl font-bold mb-4">Book a Service</h1>
 
-      <form className="space-y-6" onSubmit={handleSubmit}>
-        <input
-          type="text"
-          name="name"
-          placeholder="Full Name"
-          className="w-full p-3 border rounded"
-          value={form.name}
+      <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4">
+
+        <input name="name" placeholder="Full Name" required onChange={handleChange} />
+        <input name="email" placeholder="Email" required onChange={handleChange} />
+        <input name="phone" placeholder="Phone" required onChange={handleChange} />
+        <input name="service" placeholder="Service Needed" required onChange={handleChange} />
+        
+        <div className="grid grid-cols-2 gap-4">
+          <input type="date" name="date" required onChange={handleChange} />
+          <input type="time" name="time" required onChange={handleChange} />
+        </div>
+
+        {/* Vehicle Section */}
+        <h2 className="text-xl font-bold mt-4">Vehicle Details</h2>
+
+        <input name="make" placeholder="Make (e.g., Honda)" onChange={handleChange} />
+        <input name="model" placeholder="Model (e.g., Civic)" onChange={handleChange} />
+        <input name="year" placeholder="Year" onChange={handleChange} />
+        <input name="vin" placeholder="VIN" onChange={handleChange} />
+        <input name="mileage" placeholder="Mileage" onChange={handleChange} />
+        <input name="engine" placeholder="Engine (e.g., 3.5L V6)" onChange={handleChange} />
+        <input name="drivetrain" placeholder="Drivetrain (FWD, AWD, etc.)" onChange={handleChange} />
+
+        <textarea
+          name="notes"
+          placeholder="Additional Notes"
+          className="h-24"
           onChange={handleChange}
-          required
         />
 
-        <input
-          type="text"
-          name="phone"
-          placeholder="Phone Number"
-          className="w-full p-3 border rounded"
-          value={form.phone}
-          onChange={handleChange}
-          required
-        />
-
-        <input
-          type="email"
-          name="email"
-          placeholder="Email Address"
-          className="w-full p-3 border rounded"
-          value={form.email}
-          onChange={handleChange}
-          required
-        />
-
-        <input
-          type="text"
-          name="vehicle"
-          placeholder="Vehicle Model (e.g. Toyota Camry)"
-          className="w-full p-3 border rounded"
-          value={form.vehicle}
-          onChange={handleChange}
-          required
-        />
-
-        <input
-          type="text"
-          name="service"
-          placeholder="Requested Service"
-          className="w-full p-3 border rounded"
-          value={form.service}
-          onChange={handleChange}
-          required
-        />
-
-        <input
-          type="date"
-          name="date"
-          className="w-full p-3 border rounded"
-          value={form.date}
-          onChange={handleChange}
-          required
-        />
-
-        <button
-          type="submit"
-          className="w-full bg-black text-white p-3 rounded hover:bg-gray-900"
-        >
+        <button className="bg-yellow-500 text-black py-3 rounded">
           Submit Booking
         </button>
       </form>
-
-      {message && (
-        <p className="text-center mt-6 text-lg font-medium text-yellow-500">
-          {message}
-        </p>
-      )}
     </div>
   );
 }

@@ -1,281 +1,69 @@
-// frontend/src/lib/api.js
+import axios from "axios";
 
-const API_URL = "https://api.lagzautotechmobile.com/api";
+const API = axios.create({
+  baseURL: import.meta.env.VITE_API_URL || "https://api.lagzautotechmobile.com",
+});
 
-/* ============================================================
-   AUTH — ADMIN
-============================================================ */
-export async function adminLogin(email, password) {
-  const res = await fetch(`${API_URL}/admin/login`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password }),
-  });
+// Attach token automatically
+API.interceptors.request.use((config) => {
+  const token =
+    localStorage.getItem("adminToken") || localStorage.getItem("techToken");
 
-  return res.json();
-}
+  if (token) config.headers.Authorization = `Bearer ${token}`;
+  return config;
+});
 
-export async function getAdminMe() {
-  const token = localStorage.getItem("adminToken");
-  const res = await fetch(`${API_URL}/admin/me`, {
-    headers: { Authorization: `Bearer ${token}` }
-  });
-  return res.json();
-}
+/* -------------------------------------------
+   PUBLIC — CREATE BOOKING
+-------------------------------------------- */
+export const createBooking = (data) => API.post("/booking", data);
 
-export async function getAdminStats() {
-  const token = localStorage.getItem("adminToken");
-  const res = await fetch(`${API_URL}/admin/stats`, {
-    headers: { Authorization: `Bearer ${token}` }
-  });
-  return res.json();
-}
+/* -------------------------------------------
+   ADMIN AUTH
+-------------------------------------------- */
+export const adminLogin = (data) => API.post("/admin/login", data);
 
-/* Admin — Get All Bookings */
-export async function getAdminBookings() {
-  const token = localStorage.getItem("adminToken");
-  const res = await fetch(`${API_URL}/admin/bookings`, {
-    headers: { Authorization: `Bearer ${token}` }
-  });
-  return res.json();
-}
+/* -------------------------------------------
+   ADMIN — BOOKINGS
+-------------------------------------------- */
+export const getAdminBookings = () => API.get("/booking/admin");
 
-/* Admin — Update Booking (assign tech + update status) */
-export async function updateBookingAdmin(id, technician_id, status) {
-  const token = localStorage.getItem("adminToken");
+export const assignTechnician = (data) =>
+  API.post("/booking/assign", data);
 
-  const res = await fetch(`${API_URL}/admin/bookings/${id}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`
-    },
-    body: JSON.stringify({ technician_id, status })
-  });
+/* -------------------------------------------
+   ADMIN — CUSTOMERS
+-------------------------------------------- */
+export const getAdminCustomers = () => API.get("/admin/customers");
 
-  return res.json();
-}
+/* -------------------------------------------
+   ADMIN — TECHNICIANS
+-------------------------------------------- */
+export const getTechnicians = () => API.get("/admin/technicians");
 
-/* ============================================================
-   AUTH — TECHNICIAN
-============================================================ */
-export async function techLogin(email, password) {
-  const res = await fetch(`${API_URL}/tech/login`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password })
-  });
-  return res.json();
-}
+/* -------------------------------------------
+   TECH AUTH
+-------------------------------------------- */
+export const techLogin = (data) => API.post("/tech/login", data);
 
-export async function getTechMe() {
-  const token = localStorage.getItem("techToken");
-  const res = await fetch(`${API_URL}/tech/me`, {
-    headers: { Authorization: `Bearer ${token}` }
-  });
-  return res.json();
-}
+/* -------------------------------------------
+   TECH — UPDATE STATUS
+-------------------------------------------- */
+export const updateStatus = (data) => API.post("/booking/status", data);
 
-export async function getTechBookings() {
-  const token = localStorage.getItem("techToken");
-  const res = await fetch(`${API_URL}/tech/bookings`, {
-    headers: { Authorization: `Bearer ${token}` }
-  });
-  return res.json();
-}
+/* -------------------------------------------
+   ADD NOTES
+-------------------------------------------- */
+export const updateNotes = (data) => API.post("/booking/notes", data);
 
-export async function updateBookingStatus(bookingId, status) {
-  const token = localStorage.getItem("techToken");
+/* -------------------------------------------
+   TECH — PARTS + LABOR
+-------------------------------------------- */
+export const updatePartsLabor = (data) =>
+  API.post("/booking/parts-labor", data);
 
-  const res = await fetch(`${API_URL}/tech/bookings/${bookingId}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`
-    },
-    body: JSON.stringify({ status })
-  });
+/* -------------------------------------------
+   INVOICES
+-------------------------------------------- */
+export const getInvoices = () => API.get("/admin/invoices");
 
-  return res.json();
-}
-
-/* ============================================================
-   ADMIN — SERVICES CRUD
-============================================================ */
-export async function adminGetServices() {
-  const token = localStorage.getItem("adminToken");
-  const res = await fetch(`${API_URL}/admin/services`, {
-    headers: { Authorization: `Bearer ${token}` }
-  });
-  return res.json();
-}
-
-export async function createService(data) {
-  const token = localStorage.getItem("adminToken");
-
-  const res = await fetch(`${API_URL}/admin/services`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`
-    },
-    body: JSON.stringify(data)
-  });
-
-  return res.json();
-}
-
-export async function updateService(id, data) {
-  const token = localStorage.getItem("adminToken");
-
-  const res = await fetch(`${API_URL}/admin/services/${id}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`
-    },
-    body: JSON.stringify(data)
-  });
-
-  return res.json();
-}
-
-export async function deleteService(id) {
-  const token = localStorage.getItem("adminToken");
-
-  const res = await fetch(`${API_URL}/admin/services/${id}`, {
-    method: "DELETE",
-    headers: { Authorization: `Bearer ${token}` }
-  });
-
-  return res.json();
-}
-
-/* ============================================================
-   ADMIN — TECHNICIANS CRUD
-============================================================ */
-export async function getTechnicians() {
-  const token = localStorage.getItem("adminToken");
-  const res = await fetch(`${API_URL}/admin/technicians`, {
-    headers: { Authorization: `Bearer ${token}` }
-  });
-  return res.json();
-}
-
-export async function createTechnician(data) {
-  const token = localStorage.getItem("adminToken");
-
-  const res = await fetch(`${API_URL}/admin/technicians`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`
-    },
-    body: JSON.stringify(data)
-  });
-
-  return res.json();
-}
-
-export async function updateTechnician(id, data) {
-  const token = localStorage.getItem("adminToken");
-
-  const res = await fetch(`${API_URL}/admin/technicians/${id}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`
-    },
-    body: JSON.stringify(data)
-  });
-
-  return res.json();
-}
-
-export async function deleteTechnician(id) {
-  const token = localStorage.getItem("adminToken");
-
-  const res = await fetch(`${API_URL}/admin/technicians/${id}`, {
-    method: "DELETE",
-    headers: { Authorization: `Bearer ${token}` }
-  });
-
-  return res.json();
-}
-
-/* ============================================================
-   PUBLIC — GET SERVICES + CREATE BOOKING
-============================================================ */
-export async function getServices() {
-  const res = await fetch(`${API_URL}/services`);
-  return res.json();
-}
-
-export async function createBooking(data) {
-  const res = await fetch(`${API_URL}/bookings/create`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data)
-  });
-
-  return res.json();
-}
-// ===============================
-// ADMIN: GET ALL CUSTOMERS
-// ===============================
-export async function getAdminCustomers(token) {
-  const res = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/customers`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  if (!res.ok) {
-    throw new Error("Failed to fetch customers");
-  }
-
-  return res.json();
-}
-// ===============================
-// ADMIN: GET ALL INVOICES
-// ===============================
-export async function getInvoices(token) {
-  const res = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/invoices`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  if (!res.ok) throw new Error("Failed to fetch invoices");
-
-  return res.json();
-}
-
-/* ============================================================
-   DEFAULT EXPORT (OPTIONAL)
-============================================================ */
-export default {
-  adminLogin,
-  getAdminMe,
-  getAdminStats,
-  getAdminBookings,
-  updateBookingAdmin,
-
-  techLogin,
-  getTechMe,
-  getTechBookings,
-  updateBookingStatus,
-
-  adminGetServices,
-  createService,
-  updateService,
-  deleteService,
-
-  getTechnicians,
-  createTechnician,
-  updateTechnician,
-  deleteTechnician,
-
-  getServices,
-  createBooking,
-};
