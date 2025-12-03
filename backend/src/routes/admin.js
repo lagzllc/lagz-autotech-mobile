@@ -2,6 +2,7 @@ import express from "express";
 import pool from "../config/db.js";
 import jwt from "jsonwebtoken";
 import bcryptjs from "bcryptjs";
+import adminAuth from "../middleware/adminAuth.js";
 
 const router = express.Router();
 
@@ -42,6 +43,15 @@ router.post("/login", async (req, res) => {
         console.error("Admin login error:", err);
         return res.status(500).json({ message: "Server error" });
     }
+});
+router.get("/invoices", adminAuth, async (req, res) => {
+  try {
+    const result = await pool.query("SELECT * FROM invoices ORDER BY id DESC");
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Admin invoices error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
 });
 
 export default router;
