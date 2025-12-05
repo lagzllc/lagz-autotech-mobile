@@ -16,7 +16,7 @@ API.interceptors.request.use((config) => {
 /* -------------------------------------------
    PUBLIC — CREATE BOOKING
 -------------------------------------------- */
-export const createBooking = (data) => API.post("/booking", data);
+export const createBooking = (data) => API.post("/bookings", data);
 
 /* -------------------------------------------
    ADMIN AUTH

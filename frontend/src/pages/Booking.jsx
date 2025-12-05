@@ -1,70 +1,184 @@
 import { useState } from "react";
-import { createBooking } from "../lib/api";
+import axios from "axios";
 
 export default function Booking() {
   const [form, setForm] = useState({
     name: "",
     email: "",
     phone: "",
-    service: "",
-    date: "",
-    time: "",
-    notes: "",
+    vin: "",
+    year: "",
     make: "",
     model: "",
-    year: "",
-    vin: "",
     mileage: "",
-    engine: "",
-    drivetrain: ""
+    service: "",
+    description: "",
   });
 
-  const handleChange = (e) =>
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(null);
 
-  const handleSubmit = async (e) => {
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const submitBooking = async (e) => {
     e.preventDefault();
-    await createBooking(form);
-    alert("Booking submitted!");
+    setLoading(true);
+    setSuccess(null);
+
+    try {
+      const res = await axios.post(
+        "https://api.lagzautotechmobile.com/booking",
+        form
+      );
+
+      setSuccess("Booking submitted successfully! We will contact you shortly.");
+      setForm({
+        name: "",
+        email: "",
+        phone: "",
+        vin: "",
+        year: "",
+        make: "",
+        model: "",
+        mileage: "",
+        service: "",
+        description: ""
+      });
+    } catch (err) {
+      console.error(err);
+      setSuccess("Error submitting booking. Please try again.");
+    }
+
+    setLoading(false);
   };
 
   return (
-    <div className="max-w-3xl mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-4">Book a Service</h1>
+    <div className="container mx-auto px-4 py-20">
+      <h1 className="text-4xl font-bold text-center mb-10 text-secondary">
+        Book a Service
+      </h1>
 
-      <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4">
+      <form
+        onSubmit={submitBooking}
+        className="max-w-3xl mx-auto bg-white p-8 rounded-xl shadow-lg space-y-6"
+      >
+        {/* CONTACT INFO */}
+        <h2 className="text-xl font-semibold text-secondary">Contact Information</h2>
 
-        <input name="name" placeholder="Full Name" required onChange={handleChange} />
-        <input name="email" placeholder="Email" required onChange={handleChange} />
-        <input name="phone" placeholder="Phone" required onChange={handleChange} />
-        <input name="service" placeholder="Service Needed" required onChange={handleChange} />
-        
-        <div className="grid grid-cols-2 gap-4">
-          <input type="date" name="date" required onChange={handleChange} />
-          <input type="time" name="time" required onChange={handleChange} />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <input
+            name="name"
+            placeholder="Full Name"
+            value={form.name}
+            onChange={handleChange}
+            required
+            className="border p-3 rounded w-full"
+          />
+          <input
+            type="email"
+            name="email"
+            placeholder="Email Address"
+            value={form.email}
+            onChange={handleChange}
+            required
+            className="border p-3 rounded w-full"
+          />
+          <input
+            name="phone"
+            placeholder="Phone Number"
+            value={form.phone}
+            onChange={handleChange}
+            required
+            className="border p-3 rounded w-full"
+          />
         </div>
 
-        {/* Vehicle Section */}
-        <h2 className="text-xl font-bold mt-4">Vehicle Details</h2>
+        {/* VEHICLE INFO */}
+        <h2 className="text-xl font-semibold text-secondary">Vehicle Information</h2>
 
-        <input name="make" placeholder="Make (e.g., Honda)" onChange={handleChange} />
-        <input name="model" placeholder="Model (e.g., Civic)" onChange={handleChange} />
-        <input name="year" placeholder="Year" onChange={handleChange} />
-        <input name="vin" placeholder="VIN" onChange={handleChange} />
-        <input name="mileage" placeholder="Mileage" onChange={handleChange} />
-        <input name="engine" placeholder="Engine (e.g., 3.5L V6)" onChange={handleChange} />
-        <input name="drivetrain" placeholder="Drivetrain (FWD, AWD, etc.)" onChange={handleChange} />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <input
+            name="vin"
+            placeholder="VIN (optional)"
+            value={form.vin}
+            onChange={handleChange}
+            className="border p-3 rounded w-full"
+          />
+          <input
+            name="year"
+            placeholder="Year"
+            value={form.year}
+            onChange={handleChange}
+            required
+            className="border p-3 rounded w-full"
+          />
+          <input
+            name="make"
+            placeholder="Make"
+            value={form.make}
+            onChange={handleChange}
+            required
+            className="border p-3 rounded w-full"
+          />
+          <input
+            name="model"
+            placeholder="Model"
+            value={form.model}
+            onChange={handleChange}
+            required
+            className="border p-3 rounded w-full"
+          />
+          <input
+            name="mileage"
+            placeholder="Mileage"
+            value={form.mileage}
+            onChange={handleChange}
+            className="border p-3 rounded w-full"
+          />
+        </div>
+
+        {/* SERVICE & DETAILS */}
+        <h2 className="text-xl font-semibold text-secondary">Service Details</h2>
+
+        <select
+          name="service"
+          value={form.service}
+          onChange={handleChange}
+          required
+          className="border p-3 rounded w-full"
+        >
+          <option value="">Select a service</option>
+          <option value="Diagnostics">Diagnostics</option>
+          <option value="Brake Repair">Brake Repair</option>
+          <option value="Oil Change">Oil Change</option>
+          <option value="Battery Replacement">Battery Replacement</option>
+          <option value="AC Repair">AC Repair</option>
+          <option value="Other">Other</option>
+        </select>
 
         <textarea
-          name="notes"
-          placeholder="Additional Notes"
-          className="h-24"
+          name="description"
+          placeholder="Describe the issue…"
+          value={form.description}
           onChange={handleChange}
-        />
+          required
+          className="border p-3 rounded w-full min-h-[120px]"
+        ></textarea>
 
-        <button className="bg-yellow-500 text-black py-3 rounded">
-          Submit Booking
+        <button
+          disabled={loading}
+          className="w-full bg-primary text-white py-3 rounded-lg hover:bg-blue-700 transition"
+        >
+          {loading ? "Submitting…" : "Submit Booking"}
         </button>
+
+        {success && (
+          <p className="text-center text-lg mt-4 text-green-600 font-semibold">
+            {success}
+          </p>
+        )}
       </form>
     </div>
   );

@@ -3,10 +3,11 @@ import { Link } from "react-router-dom";
 
 export default function Home() {
   return (
-    <div className="pt-24 w-full">
+    <div className="w-full">
+
       {/* HERO SECTION */}
       <section className="bg-secondary text-white py-20">
-        <div className="container max-w-screen-xl mx-auto px-4 text-center">
+        <div className="container mx-auto px-4 text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
             Fast. Reliable. Mobile Auto Repair.
           </h1>
@@ -14,7 +15,7 @@ export default function Home() {
             Professional mobile mechanic serving Colorado Springs — we come to you!
           </p>
           <Link
-            to="/book"
+            to="/booking"
             className="bg-primary hover:bg-blue-700 text-white px-6 py-3 rounded-lg text-lg"
           >
             Book a Service
@@ -22,9 +23,9 @@ export default function Home() {
         </div>
       </section>
 
-      {/* SERVICES PREVIEW */}
+      {/* POPULAR SERVICES */}
       <section className="py-16 bg-gray-100">
-        <div className="container max-w-screen-xl mx-auto px-4">
+        <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center text-secondary mb-10">
             Popular Services
           </h2>
@@ -36,12 +37,14 @@ export default function Home() {
                 Full engine scans + troubleshooting delivered to your location.
               </p>
             </div>
+
             <div className="p-6 bg-white rounded-xl shadow">
               <h3 className="text-xl font-semibold mb-2">Brake Repair</h3>
               <p className="text-gray-600">
                 Brake pads, rotors, and inspections done onsite.
               </p>
             </div>
+
             <div className="p-6 bg-white rounded-xl shadow">
               <h3 className="text-xl font-semibold mb-2">Oil Change</h3>
               <p className="text-gray-600">
@@ -61,21 +64,28 @@ export default function Home() {
         </div>
       </section>
 
-      {/* GOOGLE REVIEWS */}
-      <section className="py-16 bg-white">
-        <div className="container max-w-screen-xl mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold text-secondary mb-6">
-            What Customers Are Saying
-          </h2>
-          <p className="text-gray-600 mb-8">
-            Real reviews from Colorado Springs customers.
-          </p>
+      {/* GOOGLE REVIEWS SECTION */}
+      <section className="py-20 bg-gray-50">
+        <div className="container mx-auto px-4">
 
-          <div className="flex justify-center">
-            <div
-              className="elfsight-app-6804c029-52ee-4caf-8961-2c5ff367b5c0 w-full"
-              data-elfsight-app-lazy
-            ></div>
+          {/* Section Header */}
+          <div className="text-center mb-12 fade-in">
+            <h2 className="text-4xl font-extrabold text-secondary mb-4">
+              ⭐ What Our Customers Are Saying
+            </h2>
+            <p className="text-gray-600 text-lg">
+              Real reviews from real customers in Colorado Springs.
+            </p>
+          </div>
+
+          {/* Review Widget Container */}
+          <div className="max-w-5xl mx-auto bg-white rounded-2xl shadow-xl p-6 fade-in-slow">
+            <div className="flex justify-center">
+              <div
+                className="elfsight-app-6804c029-52ee-4caf-8961-2c5ff367b5c0 w-full"
+                data-elfsight-app-lazy
+              ></div>
+            </div>
           </div>
         </div>
       </section>
@@ -83,9 +93,7 @@ export default function Home() {
       {/* CONTACT CTA */}
       <section className="bg-primary text-white py-16 text-center">
         <h2 className="text-3xl font-bold mb-4">Need Immediate Help?</h2>
-        <p className="text-lg mb-6">
-          Call now for fast mobile auto repair service.
-        </p>
+        <p className="text-lg mb-6">Call now for fast mobile auto repair service.</p>
         <a
           href="tel:7195106453"
           className="bg-white text-primary font-semibold px-6 py-3 rounded-lg text-lg"
@@ -96,4 +104,3 @@ export default function Home() {
     </div>
   );
 }
-
