@@ -1,5 +1,5 @@
 import express from "express";
-import pool from "../config/db.js";
+import pool from "../db.js";
 import { Resend } from "resend";
 
 const router = express.Router();
@@ -18,65 +18,42 @@ router.post("/", async (req, res) => {
     vin,
     service,
     notes,
-    date,
+    date
   } = req.body;
-
-  if (!name || !phone || !service) {
-    return res.status(400).json({ message: "Missing required fields" });
-  }
 
   try {
     const result = await pool.query(
       `INSERT INTO bookings
-      (customer_name, customer_phone, customer_email,
-       vehicle_year, vehicle_make, vehicle_model, engine, vin,
-       service, notes, appointment_date, status)
-      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,'pending')
-      RETURNING *`,
-      [
-        name,
-        phone,
-        email,
-        vehicle_year,
-        vehicle_make,
-        vehicle_model,
-        engine,
-        vin,
-        service,
-        notes,
-        date,
-      ]
+        (name, phone, email, vehicle_year, vehicle_make, vehicle_model, engine, vin, service, notes, date, status)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,'pending')
+       RETURNING *`,
+      [name, phone, email, vehicle_year, vehicle_make, vehicle_model, engine, vin, service, notes, date]
     );
 
     const booking = result.rows[0];
 
-    // ADMIN EMAIL
+    // SEND EMAIL NOTIFICATION
     await resend.emails.send({
-      from: "Lagz AutoTech <notifications@lagzautotechmobile.com>",
+      from: `Lagz AutoTech <${process.env.FROM_EMAIL}>`,
       to: process.env.ADMIN_EMAIL,
-      subject: "New Booking Request",
-      html: `<h2>New Booking Request</h2>
-             <p><b>Name:</b> ${name}</p>
-             <p><b>Phone:</b> ${phone}</p>
-             <p><b>Vehicle:</b> ${vehicle_year} ${vehicle_make} ${vehicle_model}</p>
-             <p><b>Service:</b> ${service}</p>`
+      subject: "New Booking Submitted",
+      html: `
+        <h2>New Booking Received</h2>
+        <p><b>Name:</b> ${name}</p>
+        <p><b>Phone:</b> ${phone}</p>
+        <p><b>Email:</b> ${email}</p>
+        <p><b>Vehicle:</b> ${vehicle_year} ${vehicle_make} ${vehicle_model}</p>
+        <p><b>Service:</b> ${service}</p>
+        <p><b>Date:</b> ${date}</p>
+        <p><b>Notes:</b> ${notes}</p>
+      `
     });
 
-    // TECH EMAIL
-    await resend.emails.send({
-      from: "Lagz AutoTech <notifications@lagzautotechmobile.com>",
-      to: process.env.TECH_EMAIL,
-      subject: "New Job Available",
-      html: `<h2>New Job Available</h2>
-             <p>${vehicle_year} ${vehicle_make} ${vehicle_model}</p>
-             <p>Service: ${service}</p>`
-    });
+    res.json({ success: true, booking });
 
-    return res.json({ message: "Booking created", booking });
-
-  } catch (err) {
-    console.error("Booking creation error:", err);
-    return res.status(500).json({ message: "Server error" });
+  } catch (error) {
+    console.error("Booking creation error:", error);
+    res.status(500).json({ message: "Server error" });
   }
 });
 

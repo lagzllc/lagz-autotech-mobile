@@ -1,19 +1,13 @@
+import dotenv from "dotenv";
+dotenv.config(); // MUST BE FIRST BEFORE ANY OTHER IMPORTS
+
+console.log("DATABASE_URL LOADED:", process.env.DATABASE_URL);
+console.log("RESEND API KEY LOADED:", !!process.env.RESEND_API_KEY);
+
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
-import dotenv from "dotenv";
 
-dotenv.config();
-console.log("DATABASE_URL LOADED:", process.env.DATABASE_URL);
-
-const app = express();
-
-// MIDDLEWARE
-app.use(cors());
-app.use(helmet());
-app.use(express.json());
-
-// ROUTE IMPORTS
 import authRoutes from "./routes/auth.js";
 import customerRoutes from "./routes/customers.js";
 import vehicleRoutes from "./routes/vehicles.js";
@@ -25,7 +19,14 @@ import adminRoutes from "./routes/admin.js";
 import techRoutes from "./routes/tech.js";
 import technicianRoutes from "./routes/technicians.js";
 
-// REGISTER ROUTES
+const app = express();
+
+// MIDDLEWARE
+app.use(cors());
+app.use(helmet());
+app.use(express.json());
+
+// ROUTES
 app.use("/api/auth", authRoutes);
 app.use("/api/customers", customerRoutes);
 app.use("/api/vehicles", vehicleRoutes);
