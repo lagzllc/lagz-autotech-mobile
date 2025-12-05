@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "https://api.lagzautotechmobile.com",
+  baseURL: import.meta.env.VITE_API_URL || "https://api.lagzautotechmobile.com/api",
 });
 
 // Attach token automatically
@@ -26,10 +26,10 @@ export const adminLogin = (data) => API.post("/admin/login", data);
 /* -------------------------------------------
    ADMIN — BOOKINGS
 -------------------------------------------- */
-export const getAdminBookings = () => API.get("/booking/admin");
+export const getAdminBookings = () => API.get("/bookings/admin");
 
 export const assignTechnician = (data) =>
-  API.post("/booking/assign", data);
+  API.post("/bookings/assign", data);
 
 /* -------------------------------------------
    ADMIN — CUSTOMERS
@@ -49,21 +49,20 @@ export const techLogin = (data) => API.post("/tech/login", data);
 /* -------------------------------------------
    TECH — UPDATE STATUS
 -------------------------------------------- */
-export const updateStatus = (data) => API.post("/booking/status", data);
+export const updateStatus = (data) => API.post("/bookings/status", data);
 
 /* -------------------------------------------
    ADD NOTES
 -------------------------------------------- */
-export const updateNotes = (data) => API.post("/booking/notes", data);
+export const updateNotes = (data) => API.post("/bookings/notes", data);
 
 /* -------------------------------------------
    TECH — PARTS + LABOR
 -------------------------------------------- */
 export const updatePartsLabor = (data) =>
-  API.post("/booking/parts-labor", data);
+  API.post("/bookings/parts-labor", data);
 
 /* -------------------------------------------
    INVOICES
 -------------------------------------------- */
 export const getInvoices = () => API.get("/admin/invoices");
-
